@@ -1,0 +1,97 @@
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <link href="css/planet_info.css" rel="stylesheet">
+
+
+    <script>
+        var PlanetID;
+        function list()
+        {
+            parent.SwitchToPlanetList()
+        }
+        function sell()
+        {
+            parent.SwitchToSell()
+        }   
+        function updatebttpt()
+        {
+            parent.action_update_own_planet("gigaofcolony",parent.GLOBAL_DATA.planet_list.rows[PlanetID].owner,parent.GLOBAL_DATA.planet_list.rows[PlanetID].id);
+        }  
+        function GetPlanetID()
+        {
+            PlanetID=parent.g_Selected_PlanetID;
+        }
+        function buy01()
+        {
+            parent.action_transfer("eosio.token", parent.GLOBAL_DATA.planet_list.rows[PlanetID].owner,"gigaofcolony","1.0000 EOS","STARDUSTBR0$"+parent.GLOBAL_DATA.planet_list.rows[PlanetID].id);
+        }
+        function buy02()
+        {
+
+        }
+        function buy03()
+        {
+
+        }
+
+    </script>
+     <div style="background: url(img/stardust_星球信息.png);width:760px;height:230px;margin:20px auto" ></div>
+    <div style="background: url(img/stardust_background2.png);background-size:contain; background-repeat:no-repeat;margin: auto;width: 1100px;height: 1200px;top:40px;position: relative;">
+        <div id="LABEL01" class="TextBlock PlainText" style="font-size:64;top:80px;left:160px;">坐标:</div>
+        <div id="LABEL01" class="TextBlock PlainText" style="font-size:64;top:160px;left:160px;">战力:</div>
+        <div id="LABEL01" class="TextBlock PlainText" style="top:280px;left:160px;">时之合金:</div>
+        <div id="LABEL01" class="TextBlock PlainText" style="top:380px;left:160px;">暗物质-钛:</div>
+        <div id="LABEL01" class="TextBlock PlainText" style="top:480px;left:160px;">重水:</div>
+
+        <div id="TEXT01" class="TextBlock PlainText" style="font-size:64;top:80px;left:500px;">0000000</div>
+        <div id="TEXT02" class="TextBlock PlainText" style="font-size:64;top:160px;left:500px;">909</div>
+        <div id="TEXT03" class="TextBlock PlainText" style="top:280px;left:540px;">999 </div>
+        <div id="TEXT04" class="TextBlock PlainText" style="top:380px;left:540px;">999</div>
+        <div id="TEXT05" class="TextBlock PlainText" style="top:480px;left:540px;">999</div>
+        
+        <div onclick="buy01()" style="background: url(img/a23.png);background-size: cover;width: 100px;height: 100px; top:260px;left:800px; position: absolute;"></div>
+        <div onclick="buy02()" style="background: url(img/a23.png);background-size: cover;width: 100px;height: 100px; top:360px;left:800px; position: absolute;"></div>
+        <div onclick="buy03()" style="background: url(img/a23.png);background-size: cover;width: 100px;height: 100px; top:460px;left:800px; position: absolute;"></div>
+  
+
+
+        <div id="TEXT01" class="TextBlock PlainText" style="top:590px;left:160px;">卖出此星球</div>
+        <div onclick="sell()" style="background: url(img/a23.png);background-size: cover;width: 140px;height: 140px; top:560px;left:780px; position: absolute;"></div>
+       
+        <div id="TEXT01" class="TextBlock PlainText" style="top:730px;left:160px;">清点兵力</div>
+        <div onclick="updatebttpt()" style="background: url(img/a23.png);background-size: cover;width: 140px;height: 140px; top:700px;left:780px; position: absolute;"></div>
+
+    </div>
+
+
+
+    <div onclick="list()" style="background: url(img/dobble_arrow_back.png);background-size:contain; background-repeat:no-repeat;width: 120;height: 120;top:10px;left:10px;position: absolute;">
+
+    </div>
+    <script>
+        GetPlanetID();
+
+        function update()
+        {
+        var coord=parent.ID2XY(parent.GLOBAL_DATA.planet_list.rows[PlanetID].id);
+        var ele =document.getElementById("TEXT01");
+        ele.innerText=coord;
+        var ele =document.getElementById("TEXT02");
+        ele.innerText=parent.GLOBAL_DATA.planet_list.rows[PlanetID].bttpoint;
+        var ele =document.getElementById("TEXT03");
+        ele.innerText=parent.GLOBAL_DATA.planet_list.rows[PlanetID].t0amount;
+        var ele =document.getElementById("TEXT04");
+        ele.innerText=parent.GLOBAL_DATA.planet_list.rows[PlanetID].t1amount;
+        var ele =document.getElementById("TEXT05");
+        ele.innerText=parent.GLOBAL_DATA.planet_list.rows[PlanetID].t2amount;
+        
+        window.setTimeout(function (){
+            update();
+        },1000);
+        }
+        update();
+    </script>
+
+</body>

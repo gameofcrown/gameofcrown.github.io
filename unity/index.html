@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <link href="../css/planet_info.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | SweetHome</title>
+    <script src="Build/UnityLoader.js"></script>
+    <script>
+      var gameInstance = UnityLoader.instantiate("gameContainer", "Build/output.json");
+      function SetCoord(x,y)
+      {
+        var res;
+        res=parent.XY2ID(x+":"+y);
+        parent.GLOBAL_DATA.attacking_planet=res;
+        parent.GLOBAL_DATA.selected_planet=res;
+        parent.PushBanner("当前选中星球"+x+":"+y);
+      }
+      
+      function hide_unity()
+      {
+          parent.HideUnityFrame()
+         
+      }
+
+    </script>
+  </head>
+  <body style="margin: 0px 0px;position: relative; background-color: rgb(43, 34, 100);">
+    <div style="position: relative;width: 1440; height: 1800px; margin: 0px auto;padding: 0px">
+    <div id="gameContainer" style="width: 1440; height: 1800px; margin: 140px auto"></div>
+    </div>
+
+    <div onclick="hide_unity()" style="background:
+        url(../img/dobble_arrow_back.png);background-size:contain;
+        background-repeat:no-repeat;width: 220px;height:
+        220px;top:30px;left:30px;position: absolute;">
+
+    </div>
+
+    <div  style="position: absolute;font-size:64px;top:20px;left:380px;color: white;width: 300px;height: 100px;">拥有者:</div>
+        <div id="LABELOWNER01" style="text-anchor: end ;position: absolute;font-size:64px;top:20px;left:680px;color: white;width: 600px;height: 100px;">NO MAN</div>
+
+    <script>
+        function UpdateGlobalData() {
+
+            var ele = document.getElementById("LABELOWNER01");
+  
+              if (parent.GLOBAL_DATA.selected_planet_info != null) {
+              if (parent.GLOBAL_DATA.selected_planet_info.rows.length > 0) {
+                ele.innerText = parent.GLOBAL_DATA.selected_planet_info.rows[0].owner;
+
+              } else {
+                ele.innerText = "NO MAN";
+
+              }
+
+            } else {
+              ele.innerText = "NO MAN";
+            }
+            window.setTimeout(function () {
+
+              UpdateGlobalData();
+            }, 100 * 3);
+          }
+    </script>
+    <script>
+      function SetCameraPos(x,y)
+      {
+        gameInstance.SendMessage("EventSystem","SetCameraPos",x+":"+y);
+
+      }
+      
+    </script>
+  </body>
+</html>
