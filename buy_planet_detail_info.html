@@ -14,8 +14,6 @@
         function buyplanet()
         {
             pl=parent.GLOBAL_DATA.trading_planet.rows[PlanetID];
-           
-            
 
             parent.action_transfer("eosio.token", parent.GLOBAL_DATA.username,"gigaofcolony",pl.money,"STARDUSTBPT$"+pl.id);
         }   
