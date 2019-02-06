@@ -26,7 +26,13 @@ xmlhttp.onreadystatechange=function()
     {
       if(GLOBAL_DATA.userinfo.rows.length>0)
       {
-        Logo.onStartBtnDown();
+        try{
+
+          gameStart();
+        }catch(e)
+        {
+          
+        }
       }
     }
     //console.log(jo);
