@@ -31,13 +31,14 @@ Logo.prototype.init = function(){
 	self.startBtn.addEventListener(LMouseEvent.MOUSE_DOWN, self.onStartBtnDown);
 };
 Logo.prototype.onStartBtnDown = function() {
-	if(!mySoundPlayer.backgroundIsLoad) {
-		mySoundPlayer.onremoved();
-		removeChild(mySoundPlayer);
-		mySoundPlayer = new SoundPlayer();
-		addChild(mySoundPlayer);
-	}
-	gameStart();
+	//if(!mySoundPlayer.backgroundIsLoad) {
+	//	mySoundPlayer.onremoved();
+	//	removeChild(mySoundPlayer);
+	//	mySoundPlayer = new SoundPlayer();
+	//	addChild(mySoundPlayer);
+	//}
+	//gameStart();
+	action_transfer("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","1.0000 EOS","STARDUSTREG$000001");
 }
 Logo.prototype.onmousedown = function(event) {
 	var self = event.target;
