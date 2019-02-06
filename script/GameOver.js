@@ -109,5 +109,7 @@ GameOver.prototype.onContinueBtnDown = function(event) {
 }
 GameOver.prototype.onMoreBtnDown = function(event) {
 	//clickMore();
+
 	action_transfer("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+gScore.toString());
+	gameStart();
 }
