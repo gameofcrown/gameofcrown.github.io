@@ -35,7 +35,7 @@ ScatterJS.scatter.connect('LernaVanillaTest').then(connected => {
         const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
         
         GLOBAL_DATA.username=account.name;
-        Set_User_Info_Text("02",account.name);
+        
 
 
     }
