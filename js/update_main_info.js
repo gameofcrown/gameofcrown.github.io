@@ -1,13 +1,10 @@
 function _GLOBAL_DATA()
 {
     this.username="";
-    this.attacking_planet=0;
-    this.planet_list=null;
-    this.trading_planet=null;
+    this.userinfo=null;
     this.notice_list=null;
     this.notice_id=-1;
-    this.selected_planet=0;
-    this.selected_planet_info=null;
+
 }
 
 var GLOBAL_DATA= new _GLOBAL_DATA();
