@@ -5,6 +5,10 @@ function _GLOBAL_DATA()
     this.gamestart=0;
     this.notice_list=null;
     this.notice_id=-1;
+    this.TOP="";
+    this.EOS="";
+    this.TOP_BANK="";
+    this.POOL="";
 
 }
 

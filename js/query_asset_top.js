@@ -1,7 +1,7 @@
-function LoadGlobalInfo(url)
+function LoadAssetTop(url)
 {
-
-  var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+"gigaofcolony"+"\",\"table\":\"topglba\"}";
+  var postdata="{\"code\":\"gameofcrown2\",\"account\":\""+GLOBAL_DATA.username+"\",\"symbol\":\""+"TOP"+"\"}";
+  //var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+GLOBAL_DATA.username+"\",\"table\":\"topusera\"}";
  //var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+"clowread1234"+"\",\"table\":\"topuser\"}";
 
  //console.log(postdata);
@@ -21,28 +21,19 @@ xmlhttp.onreadystatechange=function()
   
     var a=xmlhttp.responseText;
     var jo=JSON.parse(a);
-    
-    if(jo!=null)
-    {
-      if(jo.rows.length>0 )
-      {
-        try{
-          GLOBAL_DATA.POOL=jo.rows[0].pool;
-        }catch(e)
-        {
-
-        }
-      }
+    GLOBAL_DATA.TOP=jo;
+   
     }
     //console.log(jo);
-
     window.setTimeout(function(){
-      LoadGlobalInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows");
+      LoadAssetTop(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_currency_balance");
     }, 500 * 1);
+
     }
-  }
+   
+  
 xmlhttp.open("POST",url,true);
 xmlhttp.send(postdata);
 }
 
-LoadGlobalInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows")
+LoadAssetTop(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_currency_balance")
