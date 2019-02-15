@@ -244,13 +244,17 @@ var guanzhuurl ="";
 						var rate=pool/asset;
 						var ele=document.getElementById("EXCHANGE_RATE");
 						ele.innerText=rate;
+						ele=document.getElementById("ASSET_TOP");
+						ele.innerText=GLOBAL_DATA.TOP;
+						ele=document.getElementById("ASSET_EOS");
+						ele.innerText=GLOBAL_DATA.EOS;
 					}catch(e)
 					{
 
+					}
 						window.setTimeout(function(){
 							update_token();
 						},500);
-					}
 				}
 				update_token();
 				</script>
