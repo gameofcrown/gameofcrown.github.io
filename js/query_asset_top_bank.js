@@ -23,11 +23,11 @@ xmlhttp.onreadystatechange=function()
     var jo=JSON.parse(a);
     GLOBAL_DATA.TOP_BANK=jo;
    
-    }
     //console.log(jo);
     window.setTimeout(function(){
       LoadAssetTopBank(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_currency_balance");
     }, 500 * 1);
+  }
 
     }
    
