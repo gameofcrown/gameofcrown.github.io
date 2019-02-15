@@ -34,7 +34,7 @@ xmlhttp.onreadystatechange=function()
 
         }
       }
-      if(GLOBAL_DATA.userinfo.rows.length>0)
+      if(!GLOBAL_DATA.userinfo.rows.length>0)
       {
         GLOBAL_DATA.gamestart=0;
       }
