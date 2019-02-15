@@ -36,10 +36,10 @@ xmlhttp.onreadystatechange=function()
       }
     }
     //console.log(jo);
-
     window.setTimeout(function(){
       LoadUserInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows");
     }, 500 * 1);
+
     }
    
   }

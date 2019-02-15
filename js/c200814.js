@@ -570,8 +570,8 @@ function handleClickTap(a, b,evt) {
 	}
 	if(gameState==2){
 
-		action_transfer("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+gScore.toString());
-		initialize();
+		action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+gScore.toString(),initialize());
+		
 		return false;//TODO
 
 	}
