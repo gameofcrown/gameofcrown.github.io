@@ -196,11 +196,11 @@ var guanzhuurl ="";
 					<script type="text/javascript" src="js/query_asset_top.js"></script>
 					<script type="text/javascript" src="js/query_asset_top_bank.js"></script>
 					<script type="text/javascript" src="js/query_global.js"></script>
-				<div>
+				<div style="position: fixed;z-index: 99999999999;color: black;">
 					<table>
 						<tr>
 							<td>
-					
+								TOP余额
 							</td>
 							<td>
 								<div id="ASSET_TOP"></div>
@@ -208,7 +208,7 @@ var guanzhuurl ="";
 						</tr>
 						<tr>
 							<td>
-					
+									EOS余额
 							</td>
 							<td>
 								<div id="ASSET_EOS"></div>
@@ -216,7 +216,7 @@ var guanzhuurl ="";
 						</tr>
 						<tr>
 							<td>
-					
+								TOP=>EOS 兑换比例
 							</td>
 							<td>
 								<div id="EXCHANGE_RATE"></div>
@@ -224,7 +224,7 @@ var guanzhuurl ="";
 						</tr>
 					</table>
 					<input type="number" id="TOPEXCHANGE" value="" onclick="eos_exchange()"/>
-					<button> 兑换 </button>
+					<button type="button" style="color:black;"> 兑换 </button>
 				</div>		
 				<script>
 				function eos_exchange()
@@ -236,15 +236,21 @@ var guanzhuurl ="";
 				}
 				function update_token()
 				{
-					var asset=parseFloat(GLOBAL_DATA.TOP_BANK);
-					asset=2000000000-asset;
-					pool=parseFloat(GLOBAL_DATA.POOL);
-					var rate=pool/asset;
-					var ele=document.getElementById("EXCHANGE_RATE");
-					ele.innerText=rate;
-					window.setTimeout(function(){
-						update_token();
-					},500);
+					try{
+
+						var asset=parseFloat(GLOBAL_DATA.TOP_BANK);
+						asset=2000000000-asset;
+						pool=parseFloat(GLOBAL_DATA.POOL);
+						var rate=pool/asset;
+						var ele=document.getElementById("EXCHANGE_RATE");
+						ele.innerText=rate;
+					}catch(e)
+					{
+
+						window.setTimeout(function(){
+							update_token();
+						},500);
+					}
 				}
 				update_token();
 				</script>
