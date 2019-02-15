@@ -571,7 +571,9 @@ function handleClickTap(a, b,evt) {
 	if(gameState==2){
 
 		action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+0,initialize());
+		GLOBAL_DATA.userinfo=null;
 		sleep(1000);
+		GLOBAL_DATA.gamestart=0;
 		return false;//TODO
 
 	}
