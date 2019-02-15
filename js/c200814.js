@@ -570,8 +570,8 @@ function handleClickTap(a, b,evt) {
 	}
 	if(gameState==2){
 
-		action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+gScore.toString(),initialize());
-		
+		action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+0,initialize());
+		sleep(1000);
 		return false;//TODO
 
 	}
@@ -974,7 +974,7 @@ function renderText(a, b, d, c, e, f) {
 	ctx.restore()
 }
 var doudouIcon=new Image();
-doudouIcon.src="doudouIcon.png";
+doudouIcon.src="./doudouIcon.png";
 function drawScoreboard() {
 	1 > scoreOpacity && (scoreOpacity += .01, textOpacity += .01);
 	ctx.globalAlpha = textOpacity;
@@ -982,7 +982,9 @@ function drawScoreboard() {
 		b = String(score);
 	6 == b.length ? a = 43 : 7 == b.length ? a = 35 : 8 == b.length ? a = 31 : 9 == b.length && (a = 27);
 	0 === gameState ? (renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy, 60, "rgb(236, 240, 241)", String.fromCharCode("0xf04b"), "px FontAwesome"), renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy - 170 * settings.scale, 150, "#2c3e50", "\u8f6c\u4f60\u59b9"), renderText(trueCanvas.width /
-		2 + gdx + 5 * settings.scale, trueCanvas.height / 2 + gdy + 100 * settings.scale, 20, "rgb(44,62,80)", "\u5f00\u59cb!"),ctx.drawImage(doudouIcon,0,0,266,120,trueCanvas.width / 2 -120 * settings.scale, trueCanvas.height / 2 +250 * settings.scale,266*settings.scale,120*settings.scale)) : (0 != gameState && 0 < textOpacity && (textOpacity -= .05, renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy, 60, "rgb(236, 240, 241)", String.fromCharCode("0xf04b"), "px FontAwesome"), renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy - 170 * settings.scale, 150, "#2c3e50", "\u8f6c\u4f60\u59b9"), renderText(trueCanvas.width / 2 + gdx + 5 * settings.scale, trueCanvas.height / 2 + gdy +
+		2 + gdx + 5 * settings.scale, trueCanvas.height / 2 + gdy + 100 * settings.scale, 20, "rgb(44,62,80)", "\u5f00\u59cb!"),
+		ctx.drawImage(doudouIcon,0,0,266,120,trueCanvas.width / 2 -120 * settings.scale, trueCanvas.height / 2 +250 * settings.scale,266*settings.scale,120*settings.scale)
+		) : (0 != gameState && 0 < textOpacity && (textOpacity -= .05, renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy, 60, "rgb(236, 240, 241)", String.fromCharCode("0xf04b"), "px FontAwesome"), renderText(trueCanvas.width / 2 + gdx + 6 * settings.scale, trueCanvas.height / 2 + gdy - 170 * settings.scale, 150, "#2c3e50", "\u8f6c\u4f60\u59b9"), renderText(trueCanvas.width / 2 + gdx + 5 * settings.scale, trueCanvas.height / 2 + gdy +
 		100 * settings.scale, 20, "rgb(44,62,80)", "\u5f00\u59cb!")), ctx.globalAlpha = scoreOpacity, renderText(trueCanvas.width / 2 + gdx, trueCanvas.height / 2 + gdy, a, "rgb(236, 240, 241)", score));
 	ctx.globalAlpha = 1
 }
