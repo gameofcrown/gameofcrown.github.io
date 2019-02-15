@@ -34,6 +34,10 @@ xmlhttp.onreadystatechange=function()
 
         }
       }
+      if(GLOBAL_DATA.userinfo.rows.length>0)
+      {
+        GLOBAL_DATA.gamestart=0;
+      }
     }
     //console.log(jo);
     window.setTimeout(function(){
