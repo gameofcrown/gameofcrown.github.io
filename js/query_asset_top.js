@@ -21,10 +21,10 @@ xmlhttp.onreadystatechange=function()
 
       var a = xmlhttp.responseText;
       var jo = JSON.parse(a);
-      if (jo != null && jo.rows.length > 0) {
-        if (jo.rows[0] != GLOBAL_DATA.TOP.rows[0]) {
-          var newvalue=parseInt( jo.rows[0])
-          var oldvalue=parseInt( GLOBAL_DATA.TOP.rows[0])
+      if (jo != null && jo.length > 0) {
+        if (jo[0] != GLOBAL_DATA.TOP[0]) {
+          var newvalue=parseInt( jo[0])
+          var oldvalue=parseInt( GLOBAL_DATA.TOP[0])
           var getvalue=newvalue-oldvalue;
           if(getvalue>0)
           {

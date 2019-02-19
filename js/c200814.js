@@ -976,7 +976,7 @@ function renderText(a, b, d, c, e, f) {
 	ctx.restore()
 }
 var doudouIcon=new Image();
-doudouIcon.src="./logo.gif";
+doudouIcon.src="./doudouIcon.png";
 function drawScoreboard() {
 	1 > scoreOpacity && (scoreOpacity += .01, textOpacity += .01);
 	ctx.globalAlpha = textOpacity;
