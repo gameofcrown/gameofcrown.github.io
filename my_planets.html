@@ -1,0 +1,66 @@
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+   <div style="background: url(img/stardust_所有星球.png);width:640px;height:230px;margin:20px auto" ></div>
+    <div id="INFOLIST" style="height:1100px;overflow-y:scroll;overflow-x: hidden;">
+
+        
+    </div>
+    <div id="TEMPLATE" style="visibility:collapse;position: absolute;">
+        
+        <div id="KKK" onclicktemplate01 style="background: url(img/stardust_info_bg.png);background-size:contain;background-repeat:no-repeat;width: 1000px;height: 360px;margin:30px auto;position:relative;">
+            <div onclicktemplate02 style="width: 140px;height: 140px; left: 700px;top:100px;background: url(img/dobble_arrow_icon.png);background-size:contain;background-repeat:no-repeat;position: relative;"></div>
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48;top:100px;left:300px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">坐标:</div>
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48;top:160px;left:300px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">$COORD$</div>
+            <div style="background: url(img/confetti.png);background-size:contain;top:100px;left:100px;position: absolute;width:140px;height: 140px;"></div>
+        </div>
+    
+    </div>
+
+    <script>
+            //parent.Kpene();
+    function update() {
+
+            if(parent.GLOBAL_DATA.planet_list==null)
+            {
+                return;
+            }
+            var ele = document.getElementById("TEMPLATE");
+            
+            var len = parent.GLOBAL_DATA.planet_list.rows.length;
+            var list = document.getElementById("INFOLIST");
+            list.innerHTML="";
+            var innerhtml = ele.innerHTML;
+            for (i = 0; i < len; i++) {
+                var nele = document.createElement("div");
+                var coord=parent.ID2XY(parent.GLOBAL_DATA.planet_list.rows[i].id);
+                innerhtml = ele.innerHTML;
+                innerhtml = innerhtml.replace("$COORD$", coord);    
+                innerhtml = innerhtml.replace("onclicktemplate02", "onclick=\"detail(" + i + ")\"");
+                nele.innerHTML = innerhtml;//.replace("onclicktemplate02","onclick=\"detail("+i+")\"");
+                list.appendChild(nele);
+            }
+
+        }
+        update();
+    function detail(id)
+    {
+        parent.SwitchToPlanetInfo(id)
+        parent.GLOBAL_DATA.selected_planet=parent.GLOBAL_DATA.planet_list.rows[id].id;
+        
+    }   
+    function UpdateGlobalData()
+       {
+        
+       update();
+        window.setTimeout( function(){
+
+            UpdateGlobalData();
+        },500*1);
+       }
+       UpdateGlobalData();
+    </script>
+    
+
+</body>

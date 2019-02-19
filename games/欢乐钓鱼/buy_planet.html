@@ -1,0 +1,55 @@
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div style="background: url(img/stardust_交易列表.png);width:760px;height:230px;margin:20px auto" ></div>
+    <div id="INFOLIST" style="height:1100px;overflow-y:scroll;overflow-x: hidden;">
+
+    </div>
+    <div id="TEMPLATE" style="visibility:collapse;position: absolute;">
+        
+        <div id="KKK" onclicktemplate01 style="background: url(img/stardust_info_bg.png);background-size:contain;background-repeat:no-repeat;width: 1000px;height: 360px;margin:30px auto;position:relative;">
+            <div onclicktemplate02 style="width: 140px;height: 140px; left: 700px;top:100px;background: url(img/dobble_arrow_icon.png);background-size:contain;background-repeat:no-repeat;position: relative;"></div>
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48px;top:60px;left:300px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">EOS:</div>
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48px;top:60px;left:420px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">$MONEY$</div>
+            
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48px;top:200px;left:300px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">战力:</div>
+            <div id="LABEL01" class="TextBlock PlainText" style="font-size:48px;top:200px;left:420px;position: absolute;width:300px;color:  rgb(0, 204, 255); ">$BTTPOINT$</div>
+            <div style="background: url(img/confetti.png);background-size:contain;top:100px;left:100px;position: absolute;width:140px;height: 140px;"></div>
+
+        </div>
+    
+    </div>
+
+
+    <script>
+    function update() {
+        if(parent.GLOBAL_DATA.trading_planet==null)return;
+        var ele = document.getElementById("TEMPLATE");
+        
+        var len = parent.GLOBAL_DATA.trading_planet.rows.length;
+        var list = document.getElementById("INFOLIST");
+        list.innerHTML="";
+        var innerhtml = ele.innerHTML;
+        for (i = 0; i < len; i++) {
+            var nele = document.createElement("div");
+            var pl=parent.GLOBAL_DATA.trading_planet.rows[i];
+            innerhtml = ele.innerHTML;
+            innerhtml = innerhtml.replace("$COORD$", ""+pl.id+"");    
+            innerhtml = innerhtml.replace("$MONEY$", ""+pl.money+"");   
+            innerhtml = innerhtml.replace("$BTTPOINT$", ""+pl.bttpoint+"");   
+            innerhtml = innerhtml.replace("onclicktemplate02", "onclick=\"detail(" + i + ")\"");
+            nele.innerHTML = innerhtml;//.replace("onclicktemplate02","onclick=\"detail("+i+")\"");
+            list.appendChild(nele);
+        }
+
+    }
+    update();
+    function detail(id)
+    {
+        parent.SwitchToBuyPlanetInfo(id);
+        //parent.SwitchToPlanetInfo(id)
+    }   
+    </script>
+
+</body>

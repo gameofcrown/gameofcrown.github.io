@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+	<title>维京战争</title>
+	<link rel="shortcut icon" href="icon.png">
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="initial-scale=1.0001, minimum-scale=1.0001, maximum-scale=1.0001, user-scalable=no, minimal-ui"/>	
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<link rel="stylesheet" type="text/css" href="game.css">	
+	<script type="text/javascript" src="game.js"></script>
+	<script>
+		function gameStart()
+		{
+			ig.game.settingsGame.soundOn && ig.soundHandler.sfxPlayer.play("clickSound");
+            ig.game.settingsGame.tutorial = !1;
+            ig.game.io.storageSet("COV-settings", ig.game.settingsGame);
+			ig.game.director.loadLevel(3)
+			parent.GLOBAL_DATA.gamestart=1;
+		}
+		
+	</script>
+<script>
+	function TOP_Start()
+	{
+		gameStart();
+	}
+	</script>
+<!-- AnalyticsCode -->	
+
+<!-- APICode -->
+</head>
+
+<div class="gamecenter-activator"></div>
+
+<body onload="setTimeout(function(){window.scrollTo(0,1)},1);">
+<!--body-->
+	<div id="ajaxbar">
+		<div id="game"><canvas id="canvas"></canvas></div>
+		<div id="orientate"><img src="media/graphics/orientate/landscape.jpg" /></div>
+		<div id="play" class="play" onclick=""><img src="media/graphics/splash/mobile/cover-start.jpg" /></div>		 
+		
+</body>
+
+</html>

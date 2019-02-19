@@ -16,27 +16,11 @@ else
   }
 xmlhttp.onreadystatechange=function()
   {
-  if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-    try {
-
-      var a = xmlhttp.responseText;
-      var jo = JSON.parse(a);
-      if (jo != null && jo.rows.length > 0) {
-        if (jo.rows[0] != GLOBAL_DATA.TOP.rows[0]) {
-          var newvalue=parseInt( jo.rows[0])
-          var oldvalue=parseInt( GLOBAL_DATA.TOP.rows[0])
-          var getvalue=newvalue-oldvalue;
-          if(getvalue>0)
-          {
-            PushBanner("你获得了"+getvalue+"TOP!");
-          }
-          
-        }
-      }
-
-    } catch (e) {
-
-    }
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+  
+    var a=xmlhttp.responseText;
+    var jo=JSON.parse(a);
     GLOBAL_DATA.TOP=jo;
    
     //console.log(jo);

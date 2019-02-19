@@ -1,7 +1,7 @@
-function LoadUserInfo(url)
+function LoadGlobalInfo(url)
 {
 
-  var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+GLOBAL_DATA.username+"\",\"table\":\"topusera\"}";
+  var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+"gigaofcolony"+"\",\"table\":\"topglba\"}";
  //var postdata="{\"code\":\"gigaofcolony\",\"json\":true,\"limit\":\"100\",\"scope\":\""+"clowread1234"+"\",\"table\":\"topuser\"}";
 
  //console.log(postdata);
@@ -27,30 +27,23 @@ xmlhttp.onreadystatechange=function()
       if(GLOBAL_DATA.userinfo.rows.length>0 && GLOBAL_DATA.gamestart==0)
       {
         try{
-          
+          GLOBAL_DATA.gamestart=1;
           gameStart();
-
-          
         }catch(e)
         {
-          GLOBAL_DATA.gamestart=0;
+
         }
-      }
-      if(!GLOBAL_DATA.userinfo.rows.length>0)
-      {
-        GLOBAL_DATA.gamestart=0;
       }
     }
     //console.log(jo);
-    window.setTimeout(function(){
-      LoadUserInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows");
-    }, 500 * 1);
 
+    window.setTimeout(function(){
+      LoadGlobalInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows");
+    }, 500 * 1);
     }
-   
   }
 xmlhttp.open("POST",url,true);
 xmlhttp.send(postdata);
 }
 
-LoadUserInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows")
+LoadGlobalInfo(network.protocol+"://"+network.host+":"+network.port+"/v1/chain/get_table_rows")
