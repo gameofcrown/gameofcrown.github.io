@@ -27,8 +27,11 @@ xmlhttp.onreadystatechange=function()
       if(GLOBAL_DATA.userinfo.rows.length>0 && GLOBAL_DATA.gamestart==0)
       {
         try{
-          
-          gameStart();
+          if(GLOBAL_DATA.gameready==1)
+          {
+
+            gameStart();
+          }
 
           
         }catch(e)

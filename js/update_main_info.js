@@ -3,6 +3,7 @@ function _GLOBAL_DATA()
     this.username="";
     this.userinfo=null;
     this.gamestart=0;
+    this.gameready=0;
     this.notice_list=null;
     this.notice_id=-1;
     this.TOP="";
