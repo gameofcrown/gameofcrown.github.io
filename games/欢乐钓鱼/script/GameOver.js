@@ -110,7 +110,7 @@ GameOver.prototype.onContinueBtnDown = function(event) {
 GameOver.prototype.onMoreBtnDown = function(event) {
 	//clickMore();
 
-	parent.action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+0,function (){gameStart();}   );
+	parent.action_transfer_callback("eosio.token", parent.GLOBAL_DATA.username ,"gigaofcolony","0.0001 EOS","STARDUSTRND$"+0,function (){Logo();}   );
 
 	
 }
