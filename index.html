@@ -1,271 +1,142 @@
+
+<!doctype html>
 <html>
-<head>
-        <meta charset="UTF-8">
-</head>
-<body onresize="EleScale()" onload="EleScale()" id="BODY" style="margin: 0px;padding: 0px;">
-    <link href="css/planet_info.css" rel="stylesheet">
-    <script src="./bundles/eos.min.js"></script>
-    <script src="./bundles/scatterjs-core.min.js"></script>
-    <script src="./bundles/scatterjs-plugin-eosjs.min.js"></script>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport"
+			content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no, minimal-ui">
+		<meta name="copyright" content="Copyright (c) ijinshan.com">
+		<meta name="format-detection" content="telephone=no">
+		<title>空中传媒</title>
+		<link rel="stylesheet" type="text/css" href="css/min.css">
+	</head>
+	<body>
+		<div id="wrap">
+			<div class="title"></div>
+			<div class="main">
+				<div class="shadow"></div>
+				<div class="cola"></div>
+				<div class="cap">
+					<div class="tomatina"></div>
+				</div>
+				<div class="boom"></div>
+			</div>
+			<div class="progress_box">
+				<div class="progress"></div>
+			</div>
+			<span class="bf_2">0%</span>
+			<div class="ready"></div>
+			<div class="progress_num">
+				<span class="time">00.000</span><span class="bf"
+					style="font-size: 16px">100%</span>
+			</div>
+			<div class="layer">
+				<div class="confirm client_pop_show">
+					<p>
+						我用了
+						<span class="red" id="t"></span>秒，摇爆可乐，超级爽！击败了全国
+						<span class="red" id="b">90%</span>燥热的人，看谁比我快？
+					</p>
+					<div class="layer_btns">
+						<a href="javascript:;" id="tryagain">再摇一次</a><a
+							href="javascript:;" onClick="clickMore();">更多游戏</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<audio src="images/fizzing.mp3" id="fizzing" preload></audio>
+		<audio src="images/shake.mp3" id="shake" preload></audio>
+		<script src="js/shake.min.js"></script>
+		<script language=javascript>
+		var mebtnopenurl = 'http://game.ikongzhong.cn';
+		window.shareData = {
+		        "imgUrl": "http://game.ikongzhong.cn/icon/qmykl.png",
+		        "timeLineLink": "http://game.ikongzhong.cn/games/qmykl/index.html",
+		        "tTitle": "全民摇可乐-空中传媒",
+		        "tContent": "全民摇可乐-空中传媒"
+		};
+				
+		function goHome(){
+			window.location=mebtnopenurl;
+		}
+		function clickMore(){
+			if((window.location+"").indexOf("zf",1)>0){
+				window.location = "http://game.ikongzhong.cn/games/qmykl";
+			 }
+			 else{
+				goHome();
+			 }
+		}
+		function dp_share(){
+			document.title ="全民摇可乐，摇不停，爽到爆，快乐不停歇，一起来摇摆！";
+			document.getElementById("share").style.display="";
+			window.shareData.tTitle = document.title;
+		}
+		function dp_Ranking(){
+			window.location=mebtnopenurl;
+		}
 
-<script>
-    var g_Selected_PlanetID;
-    var g_Teleport_PlanetID;
-    function EleScale() {
-        var ele = document.getElementById("MAINCONTAINER");
-        var a = ele.clientWidth;
-        var b = window.innerWidth;
-        a = parseFloat(a);
-        b = parseFloat(b);
-        var ratex = b / a;
+		function showAd(){
+		}
+		function hideAd(){
+		}
+		document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		    
+		    WeixinJSBridge.on('menu:share:appmessage', function(argv) {
+		        WeixinJSBridge.invoke('sendAppMessage', {
+		            "img_url": window.shareData.imgUrl,
+		            "link": window.shareData.timeLineLink,
+		            "desc": window.shareData.tContent,
+		            "title": window.shareData.tTitle
+		        }, onShareComplete);
+		    });
 
-        a = ele.clientHeight;
-        b = window.innerHeight;
-        a = parseFloat(a);
-        b = parseFloat(b);
-        var ratey = b / a;
-
-        var rate =ratex>ratey?ratey:ratex;
-        var mcleft= (window.innerWidth-ele.clientWidth*rate)/2;
-        ele.style.left=mcleft;
-        ele.style.WebkitTransform = "scale(" + rate + "," + rate + ")";
-
-       
-
-        ele = document.getElementById("ADAPTIVESIZE");
-        ele.style.width=window.innerWidth;
-        ele.style.height=window.innerHeight;//*16/9.0;
-
-        ele = document.getElementById("BODY");
-        ele.style.width=window.innerWidth;
-        ele.style.height=window.innerHeight;//*16/9.0;
-        
-
-    }
-
-    function SwitchToPlanetInfo(planetid)
-    {
-        PushBanner("在此页面查看星球信息");
-        //HideUnityFrame();
-        ele = document.getElementById("MAINFRAME");
-        ele.src="./games/六角转呀转/index.html";
-        GLOBAL_DATA.gamestart=0;
-        //g_Selected_PlanetID=planetid;
-
-       // window.setTimeout(
-       //  function()
-       // {
-       // ele.contentWindow. SetPlanetID(planetid);
-//
-       // }
-       // ,3000
-       // 
-       // )
-    }
-    function SwitchToPlanetList()
-    {
-        
-        PushBanner("六角转呀转");
-       
-        ele = document.getElementById("MAINFRAME");
-        ele.src="./games/六角转呀转/index.html";
-        GLOBAL_DATA.gamestart=0;
-        GLOBAL_DATA.gameready=0;
-        //ele.src="my_planets.html";
-    }
-    function SwitchToSell()
-    {
-        PushBanner("出售星球");
-        
-        ele = document.getElementById("MAINFRAME");
-        //ele.src="sell_planet.html";
-    }
-    function SwitchToBuyPlanet()
-    {
-        PushBanner("维京战争");
-       
-        ele = document.getElementById("MAINFRAME");
-        ele.src="./games/维京战争/index.html";
-        GLOBAL_DATA.gamestart=0;
-        GLOBAL_DATA.gameready=0;
-    }
-    function SwitchToBuyPlanetInfo(planetid)
-    {
-        PushBanner("查看此笔交易详细信息");
-       
-        g_Selected_PlanetID=planetid;
-        ele = document.getElementById("MAINFRAME");
-        //ele.src="buy_planet_detail_info.html";
-        
-    }
-    function SwitchToUniversialMap()
-    {
-        PushBanner("欢乐钓鱼");
-        ele = document.getElementById("MAINFRAME");
-        ele.src="./games/欢乐钓鱼/index.html";
-        GLOBAL_DATA.gamestart=0;
-        GLOBAL_DATA.gameready=0;
-        //ele.src="universal_map.html";
-       
-        
-   
-    }
-    function SwitchToFight()
-    {
-        //PushBanner("正在准备攻打星球:"+ID2XY(GLOBAL_DATA.attacking_planet));
-        
-        ele = document.getElementById("MAINFRAME");
-        //ele.src="fighting_gold.html";
-    }
-    function SwitchToNotice()
-    {
-        
-        ele = document.getElementById("MAINFRAME");
-        //ele.src="my_notice.html";
-    }
-    function gameStart()
-    {
-        ele = document.getElementById("MAINFRAME");
-       
-        try{
-
-            ele.contentWindow.TOP_Start();
-        }catch(e)
-        {
-            GLOBAL_DATA.gamestart=0;
-        }
-    }
-    
-</script>
-<script type="text/javascript" src="js/update_main_info.js"></script>
-<script type="text/javascript" src="js/scatter_connecter.js"></script>
-<script type="text/javascript" src="js/scatter_actions.js"></script>
-<script type="text/javascript" src="js/query_userinfo.js"></script>
-<script type="text/javascript" src="js/query_global.js"></script>
-<script type="text/javascript" src="js/query_asset_eos.js"></script>
-<script type="text/javascript" src="js/query_asset_top.js"></script>
-<script type="text/javascript" src="js/query_asset_top_bank.js"></script>
-
-
-
-<div id="ADAPTIVESIZE" style="overflow: hidden">
-
-<div id="MAINCONTAINER" style="position: relative;margin:0 auto;overflow: hidden;display: block;top: 0px;left: 0px;transform-origin: 0% 0%;;-webkit-transform-origin-x:0%;-webkit-transform-origin-y:0%;width: 1440px;height: 2560px;">
-    <div style="background-image: url(img/stardust_background1.png);background-size: cover; width: 1440px;height: 2560px;position: relative;">
-        
-        <div id="USERINFOTEXT01" style="top:60px;left:80px;     width: 300px;height: 50px;  text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;"></div>
-        <div id="USERINFOTEXT02" style="top:30px;left:560px;    width: 300px;height: 50px;  text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;">username</div>
-        <div id="USERINFOTEXT03" style="top:60px;left:1100px;   width: 300px;height: 50px;  text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;"></div>
-        <input id="USERINFOTEXT04" type="number" class="TextBlock PlainText" maxlength="10" style="top:210px;left:80px;width: 800px;height: 64px;text-align:right;background-color: transparent;border-width:0px;text-indent:20px;text-shadow: 0px 0px 20px rgb(0, 204, 255)" />
-        <div id="USERINFOTEXT05" onclick="eos_exchange()" style="top:180px;left:900px;    width: 500px;height: 130px; text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;">
-            <div style="display:block;margin: 32px auto;">
-                TOP兑换EOS
-            </div>
-        </div>>
-        
-        <div id="USERINFOTEXT06" style="top:330px;left:780px;    width: 300px;height: 64px;  text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;"></div>
-        <div id="USERINFOTEXT07" style="top:320px;left:320px;    width: 500px;height: 64px;  text-align: center;  position: absolute;display: block;font-size: 48px;color: aqua;">
-            <div style="display:block;margin: 2px auto;">
-                当前兑换比例:
-            </div>
-        </div>
-        
-    
-
-
-        <div style="overflow: hidden;border-width: 0px;position: absolute;top:450px;left:00px;width: 1440px;height: 1780px;" >
-
-                <iframe id="MAINFRAME" src="./games/六角转呀转/index.html" style="border-width: 0px;position: relative;top:0px;left:0px;width: 1440px;height: 1800px;" ></iframe>
-        </div>
-
-      
- 
-        <div onclick="SwitchToPlanetList()" style="top:2300px;left:300px; background-image: url(img/a5.png); background-size: cover; width: 220px;height: 220px;   position: absolute;display: block;"></div>    
-        <div onclick="SwitchToBuyPlanet()" style="top:2300px;left:520px; background-image: url(img/a8.png); background-size: cover; width: 220px;height: 220px;   position: absolute;display: block;"></div>    
-        <div onclick="SwitchToUniversialMap()" style="top:2300px;left:740px; background-image: url(img/a20.png); background-size: cover; width: 220px;height: 220px;   position: absolute;display: block;"></div>    
-        <div onclick="SwitchToFight()" style="top:2300px;left:960px; background-image: url(img/blank.png); background-size: cover; width: 220px;height: 220px;   position: absolute;display: block;"></div>    
-        <div onclick="SwitchToNotice()" style="top:2300px;left:1180px; background-image: url(img/blank.png); background-size: cover; width: 220px;height: 220px;   position: absolute;display: block;"></div>    
-        <div class="PlainText36" style="top:2460px;left:300px;   width: 220px;height: 80px;  text-align: center; position: absolute;display: block;">转你妹</div>    
-        <div class="PlainText36" style="top:2460px;left:520px;   width: 220px;height: 80px;  text-align: center; position: absolute;display: block;">维京战争</div>    
-        <div class="PlainText36" style="top:2460px;left:740px;   width: 220px;height: 80px;  text-align: center; position: absolute;display: block;">欢乐钓鱼</div>    
-        <div class="PlainText36" style="top:2460px;left:960px;   width: 220px;height: 80px;  text-align: center; position: absolute;display: block;">开发中</div>    
-        <div class="PlainText36" style="top:2460px;left:1180px;  width: 220px;height: 80px;  text-align: center; position: absolute;display: block;">敬请期待</div>    
-
-        <div style="top:2270px;left:25px; background-image: url(img/stardust_usergraph.png); background-size: cover; width: 200px;height: 200px;   position: absolute;display: block;"></div>    
-
-
-    </div>
-
-    <div id="NOTICEBANNER" style="background-image: url(img/stardust_notice_bg.png); background-size: 100% 100%; position: fixed;width: 1400px;height:300px;top:100px;left:0px;">
-        <div style="width: 1400px;height:300px;top:100px;position: absolute;">
-            <div id="NOTICETEXT" style="position: relative;margin: auto;font-size: 48px;color:white;text-align: center;">
-                EOS小游戏
-            </div>
-            
-        </div>
-        <div id="MESSAGEICON" style="background: url(img/message.png);background-size:contain; background-repeat:no-repeat;width: 150;height: 150;top:70px;left:100px;position: absolute;">
-
-        </div>
-
-    </div>
-    <script type="text/javascript" src="js/notice_banner.js"></script>
-<div id="SPLASH" style="position:fixed;top:0px;left:0px;width:1440;height: 2560;background: url(img/space_bg1.png);background-size:100% 100% ;">
-<div style="top:500px;left: 0px;font-size: 96px;color: azure;width: 1440px;text-align: center;position: absolute;">
-EOS小游戏
-</div>>
-<div style="top:700px;left: 0px;font-size: 64px;color: azure;width: 1440px;text-align: center;position: absolute;">
-        正在加载
-</div>>
-</div>
-<script>
-    window.setTimeout(function(){
-        var ele=document.getElementById("SPLASH");
-        ele.style.visibility="hidden";
-      
-    },1000)
-
-</script>
-<script>
-    function eos_exchange()
-    {
-        var ele=document.getElementById("USERINFOTEXT04");
-        var asset=parseInt(ele.value);
-        asset=(asset).toFixed(4)+" TOP";
-        action_transfer("gameofcrown2", parent.GLOBAL_DATA.username ,"gigaofcolony",asset,"STARDUSTBCK$000001");
-    }
-    function update_token()
-    {
-        try{
-
-            var asset=parseFloat(GLOBAL_DATA.TOP_BANK);
-            asset=2000000000-asset;
-            pool=parseFloat(GLOBAL_DATA.POOL);
-            var rate=pool/asset;
-            rate=rate.toFixed(4);
-            Set_User_Info_Text("06",rate)
-            
-            Set_User_Info_Text("01",GLOBAL_DATA.TOP)
-           
-            Set_User_Info_Text("03",GLOBAL_DATA.EOS)
-            Set_User_Info_Text("02",GLOBAL_DATA.username)
-            
-        }catch(e)
-        {
-
-        }
-            window.setTimeout(function(){
-                update_token();
-            },500);
-    }
-    update_token();
-    </script>
-
-</div>
-
-
-
-</div>
-
-
-</body>
+		    WeixinJSBridge.on('menu:share:timeline', function(argv) {
+		        WeixinJSBridge.invoke('shareTimeline', {
+		            "img_url": window.shareData.imgUrl,
+		            "img_width": "640",
+		            "img_height": "640",
+		            "link": window.shareData.timeLineLink,
+		            "desc": window.shareData.tContent,
+		            "title": window.shareData.tTitle
+		        }, onShareComplete);
+		    });
+		}, false);
+		</script>
+		<div id=share style="display: none">
+			<img width=100% src="http://game.ikongzhong.cn/games/qmykl/share.png"
+				style="position: fixed; z-index: 9999; top: 0; left: 0; display: "
+				ontouchstart="document.getElementById('share').style.display='none';" />
+		</div>
+		<div style="display: none;">
+			<script type="text/javascript">
+            var myData = { gameid: "qmykl" };
+			window.shareData.timeLineLink ="http://game.ikongzhong.cn/games/qmykl";
+			function dp_submitScore(score,percent){
+				myData.score = parseInt(score*1000);
+				myData.scoreName = "摇可乐用时"+score+"秒";
+				if(score>0){
+					if (confirm("我仅用了"+score+"秒摇可乐，征服了"+percent+"%的人们，不摇一摇怎么够爽！")){
+						dp_share();
+					}
+				}
+			}
+			function onShareComplete(res) {
+                if (localStorage.myuid && myData.score != undefined) {
+                    setTimeout(function(){
+                        if (confirm("要将成绩提交到空中传媒排行榜吗？")) {
+                            window.location = "http://game.ikongzhong.cn";
+                        }
+                        else {
+                            document.location.href = mebtnopenurl;
+                        }
+                    }, 500);
+                }
+				else {
+		        	document.location.href = mebtnopenurl;
+				}
+	        }
+			</script>
+			
+	</body>
 </html>
