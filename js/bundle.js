@@ -1188,6 +1188,7 @@ var GameConfig=(function(){
 		reg("script.carddetail.carddetail",carddetail);
 		reg("script.cardlist.cardlist",cardlist);
 		reg("script.drawcard.drawcard",drawcard);
+		reg("script.gamelogo.gamelogo",gamelogo);
 		reg("script.GameUI",GameUI);
 		reg("laya.physics.BoxCollider",BoxCollider);
 		reg("laya.physics.RigidBody",RigidBody);
@@ -1202,11 +1203,11 @@ var GameConfig=(function(){
 
 	GameConfig.width=640;
 	GameConfig.height=1136;
-	GameConfig.scaleMode="noscale";
+	GameConfig.scaleMode="showall";
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="cardlist/Card_List.scene";
+	GameConfig.startScene="gamelogo/Game_Logo.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -82612,7 +82613,7 @@ var tradelist=(function(_super){
 			__class(Item,'',_super);
 			var __proto=Item.prototype;
 			__proto.setImg=function(src){
-				this.img.texture="108graph/"+(/*no*/this.m_CardID+1).toString()+".jpg"
+				this.img.texture="108graph/"+(tradelist.m_CardID+1).toString()+".jpg"
 				this.m_backgroung.texture="UI/tradelist001.png";
 			}
 			Item.WID=580;
@@ -82643,7 +82644,10 @@ var gamelogo=(function(_super){
 		Scene.open("cardlist/Card_List.scene");
 	}
 
-	__proto.onEnable=function(){}
+	__proto.onEnable=function(){
+		this.on("click",this,this.onTipClick);
+	}
+
 	__proto.onDisable=function(){}
 	return gamelogo;
 })(Scene)
@@ -96344,7 +96348,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,cardlist,tradelist,LocalStorage,CallLater,View,GraphicAnimation,Physics,Path]);
+	Laya.__init([LoaderManager,EventDispatcher,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,cardlist,tradelist,LocalStorage,View,CallLater,GraphicAnimation,Physics,Path]);
 	/**LayaGameStart**/
 	new Main();
 
