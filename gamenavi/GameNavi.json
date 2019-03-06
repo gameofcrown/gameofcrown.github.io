@@ -1,0 +1,1 @@
+{"type":"Scene","props":{"width":640,"runtime":"script.gamenavi.gamenavi","height":1136},"compId":2,"child":[{"type":"Sprite","props":{"y":0,"x":-2,"width":658,"texture":"UI/File 000052.png","height":1155},"compId":3},{"type":"Animation","props":{"var":"m_Gold_Gen_Animation","name":"m_Gold_Gen_Animation"},"compId":4}],"loadList":["UI/File 000052.png"],"loadList3D":[]}

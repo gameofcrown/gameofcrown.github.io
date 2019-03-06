@@ -1223,6 +1223,7 @@ var GameConfig=(function(){
 		reg("script.cardlist.cardlist",cardlist);
 		reg("script.drawcard.drawcard",drawcard);
 		reg("script.gamelogo.gamelogo",gamelogo);
+		reg("script.gamenavi.gamenavi",gamenavi);
 		reg("script.GameUI",GameUI);
 		reg("laya.physics.BoxCollider",BoxCollider);
 		reg("laya.physics.RigidBody",RigidBody);
@@ -1241,7 +1242,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="cardlist/Card_List.scene";
+	GameConfig.startScene="tradelist/Trade_List.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -47442,194 +47443,6 @@ var ConeShape=(function(_super){
 
 
 /**
-*<code>IndexBuffer3D</code> 类用于创建索引缓冲。
-*/
-//class laya.d3.graphics.IndexBuffer3D extends laya.webgl.utils.Buffer
-var IndexBuffer3D=(function(_super){
-	function IndexBuffer3D(indexType,indexCount,bufferUsage,canRead){
-		/**@private */
-		this._indexType=null;
-		/**@private */
-		this._indexTypeByteCount=0;
-		/**@private */
-		this._indexCount=0;
-		/**@private */
-		this._canRead=false;
-		(bufferUsage===void 0)&& (bufferUsage=0x88E4);
-		(canRead===void 0)&& (canRead=false);
-		IndexBuffer3D.__super.call(this);
-		this._indexType=indexType;
-		this._indexCount=indexCount;
-		this._bufferUsage=bufferUsage;
-		this._bufferType=0x8893;
-		this._canRead=canRead;
-		var byteLength=0;
-		if (indexType=="ushort")
-			this._indexTypeByteCount=2;
-		else if (indexType=="ubyte")
-		this._indexTypeByteCount=1;
-		else
-		throw new Error("unidentification index type.");
-		byteLength=this._indexTypeByteCount *indexCount;
-		this._byteLength=byteLength;
-		var curBufSta=BufferStateBase._curBindedBufferState;
-		if (curBufSta){
-			if (curBufSta._bindedIndexBuffer===this){
-				LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
-				}else {
-				curBufSta.unBind();
-				this.bind();
-				LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
-				curBufSta.bind();
-			}
-			}else {
-			this.bind();
-			LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
-		}
-		if (canRead){
-			if (indexType=="ushort")
-				this._buffer=new Uint16Array(indexCount);
-			else if (indexType=="ubyte")
-			this._buffer=new Uint8Array(indexCount);
-		}
-	}
-
-	__class(IndexBuffer3D,'laya.d3.graphics.IndexBuffer3D',_super);
-	var __proto=IndexBuffer3D.prototype;
-	/**
-	*@inheritDoc
-	*/
-	__proto._bindForVAO=function(){
-		if (BufferStateBase._curBindedBufferState){
-			LayaGL.instance.bindBuffer(0x8893,this._glBuffer);
-			}else {
-			throw "IndexBuffer3D: must bind current BufferState.";
-		}
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto.bind=function(){
-		if (BufferStateBase._curBindedBufferState){
-			throw "IndexBuffer3D: must unbind current BufferState.";
-			}else {
-			if (Buffer._bindedIndexBuffer!==this._glBuffer){
-				LayaGL.instance.bindBuffer(0x8893,this._glBuffer);
-				Buffer._bindedIndexBuffer=this._glBuffer;
-				return true;
-				}else {
-				return false;
-			}
-		}
-	}
-
-	/**
-	*设置数据。
-	*@param data 索引数据。
-	*@param bufferOffset 索引缓冲中的偏移。
-	*@param dataStartIndex 索引数据的偏移。
-	*@param dataCount 索引数据的数量。
-	*/
-	__proto.setData=function(data,bufferOffset,dataStartIndex,dataCount){
-		(bufferOffset===void 0)&& (bufferOffset=0);
-		(dataStartIndex===void 0)&& (dataStartIndex=0);
-		(dataCount===void 0)&& (dataCount=4294967295);
-		var byteCount=0;
-		if (this._indexType=="ushort"){
-			byteCount=2;
-			if (dataStartIndex!==0 || dataCount!==4294967295)
-				data=new Uint16Array(data.buffer,dataStartIndex *byteCount,dataCount);
-			}else if (this._indexType=="ubyte"){
-			byteCount=1;
-			if (dataStartIndex!==0 || dataCount!==4294967295)
-				data=new Uint8Array(data.buffer,dataStartIndex *byteCount,dataCount);
-		};
-		var curBufSta=BufferStateBase._curBindedBufferState;
-		if (curBufSta){
-			if (curBufSta._bindedIndexBuffer===this){
-				LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
-				}else {
-				curBufSta.unBind();
-				this.bind();
-				LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
-				curBufSta.bind();
-			}
-			}else {
-			this.bind();
-			LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
-		}
-		if (this._canRead){
-			if (bufferOffset!==0 || dataStartIndex!==0 || dataCount!==4294967295){
-				var maxLength=this._buffer.length-bufferOffset;
-				if (dataCount > maxLength)
-					dataCount=maxLength;
-				for (var i=0;i < dataCount;i++)
-				this._buffer[bufferOffset+i]=data[i];
-				}else {
-				this._buffer=data;
-			}
-		}
-	}
-
-	/**
-	*获取索引数据。
-	*@return 索引数据。
-	*/
-	__proto.getData=function(){
-		if (this._canRead)
-			return this._buffer;
-		else
-		throw new Error("Can't read data from VertexBuffer with only write flag!");
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto.destroy=function(){
-		_super.prototype.destroy.call(this);
-		this._buffer=null;
-	}
-
-	/**
-	*获取索引类型。
-	*@return 索引类型。
-	*/
-	__getset(0,__proto,'indexType',function(){
-		return this._indexType;
-	});
-
-	/**
-	*获取索引类型字节数量。
-	*@return 索引类型字节数量。
-	*/
-	__getset(0,__proto,'indexTypeByteCount',function(){
-		return this._indexTypeByteCount;
-	});
-
-	/**
-	*获取索引个数。
-	*@return 索引个数。
-	*/
-	__getset(0,__proto,'indexCount',function(){
-		return this._indexCount;
-	});
-
-	/**
-	*获取是否可读。
-	*@return 是否可读。
-	*/
-	__getset(0,__proto,'canRead',function(){
-		return this._canRead;
-	});
-
-	IndexBuffer3D.INDEXTYPE_UBYTE="ubyte";
-	IndexBuffer3D.INDEXTYPE_USHORT="ushort";
-	return IndexBuffer3D;
-})(Buffer)
-
-
-/**
 *<code>PhysicsComponent</code> 类用于创建物理组件的父类。
 */
 //class laya.d3.physics.PhysicsComponent extends laya.components.Component
@@ -48180,6 +47993,194 @@ var PhysicsComponent=(function(_super){
 	]);
 	return PhysicsComponent;
 })(Component)
+
+
+/**
+*<code>IndexBuffer3D</code> 类用于创建索引缓冲。
+*/
+//class laya.d3.graphics.IndexBuffer3D extends laya.webgl.utils.Buffer
+var IndexBuffer3D=(function(_super){
+	function IndexBuffer3D(indexType,indexCount,bufferUsage,canRead){
+		/**@private */
+		this._indexType=null;
+		/**@private */
+		this._indexTypeByteCount=0;
+		/**@private */
+		this._indexCount=0;
+		/**@private */
+		this._canRead=false;
+		(bufferUsage===void 0)&& (bufferUsage=0x88E4);
+		(canRead===void 0)&& (canRead=false);
+		IndexBuffer3D.__super.call(this);
+		this._indexType=indexType;
+		this._indexCount=indexCount;
+		this._bufferUsage=bufferUsage;
+		this._bufferType=0x8893;
+		this._canRead=canRead;
+		var byteLength=0;
+		if (indexType=="ushort")
+			this._indexTypeByteCount=2;
+		else if (indexType=="ubyte")
+		this._indexTypeByteCount=1;
+		else
+		throw new Error("unidentification index type.");
+		byteLength=this._indexTypeByteCount *indexCount;
+		this._byteLength=byteLength;
+		var curBufSta=BufferStateBase._curBindedBufferState;
+		if (curBufSta){
+			if (curBufSta._bindedIndexBuffer===this){
+				LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
+				}else {
+				curBufSta.unBind();
+				this.bind();
+				LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
+				curBufSta.bind();
+			}
+			}else {
+			this.bind();
+			LayaGL.instance.bufferData(this._bufferType,byteLength,this._bufferUsage);
+		}
+		if (canRead){
+			if (indexType=="ushort")
+				this._buffer=new Uint16Array(indexCount);
+			else if (indexType=="ubyte")
+			this._buffer=new Uint8Array(indexCount);
+		}
+	}
+
+	__class(IndexBuffer3D,'laya.d3.graphics.IndexBuffer3D',_super);
+	var __proto=IndexBuffer3D.prototype;
+	/**
+	*@inheritDoc
+	*/
+	__proto._bindForVAO=function(){
+		if (BufferStateBase._curBindedBufferState){
+			LayaGL.instance.bindBuffer(0x8893,this._glBuffer);
+			}else {
+			throw "IndexBuffer3D: must bind current BufferState.";
+		}
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.bind=function(){
+		if (BufferStateBase._curBindedBufferState){
+			throw "IndexBuffer3D: must unbind current BufferState.";
+			}else {
+			if (Buffer._bindedIndexBuffer!==this._glBuffer){
+				LayaGL.instance.bindBuffer(0x8893,this._glBuffer);
+				Buffer._bindedIndexBuffer=this._glBuffer;
+				return true;
+				}else {
+				return false;
+			}
+		}
+	}
+
+	/**
+	*设置数据。
+	*@param data 索引数据。
+	*@param bufferOffset 索引缓冲中的偏移。
+	*@param dataStartIndex 索引数据的偏移。
+	*@param dataCount 索引数据的数量。
+	*/
+	__proto.setData=function(data,bufferOffset,dataStartIndex,dataCount){
+		(bufferOffset===void 0)&& (bufferOffset=0);
+		(dataStartIndex===void 0)&& (dataStartIndex=0);
+		(dataCount===void 0)&& (dataCount=4294967295);
+		var byteCount=0;
+		if (this._indexType=="ushort"){
+			byteCount=2;
+			if (dataStartIndex!==0 || dataCount!==4294967295)
+				data=new Uint16Array(data.buffer,dataStartIndex *byteCount,dataCount);
+			}else if (this._indexType=="ubyte"){
+			byteCount=1;
+			if (dataStartIndex!==0 || dataCount!==4294967295)
+				data=new Uint8Array(data.buffer,dataStartIndex *byteCount,dataCount);
+		};
+		var curBufSta=BufferStateBase._curBindedBufferState;
+		if (curBufSta){
+			if (curBufSta._bindedIndexBuffer===this){
+				LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
+				}else {
+				curBufSta.unBind();
+				this.bind();
+				LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
+				curBufSta.bind();
+			}
+			}else {
+			this.bind();
+			LayaGL.instance.bufferSubData(this._bufferType,bufferOffset *byteCount,data);
+		}
+		if (this._canRead){
+			if (bufferOffset!==0 || dataStartIndex!==0 || dataCount!==4294967295){
+				var maxLength=this._buffer.length-bufferOffset;
+				if (dataCount > maxLength)
+					dataCount=maxLength;
+				for (var i=0;i < dataCount;i++)
+				this._buffer[bufferOffset+i]=data[i];
+				}else {
+				this._buffer=data;
+			}
+		}
+	}
+
+	/**
+	*获取索引数据。
+	*@return 索引数据。
+	*/
+	__proto.getData=function(){
+		if (this._canRead)
+			return this._buffer;
+		else
+		throw new Error("Can't read data from VertexBuffer with only write flag!");
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.destroy=function(){
+		_super.prototype.destroy.call(this);
+		this._buffer=null;
+	}
+
+	/**
+	*获取索引类型。
+	*@return 索引类型。
+	*/
+	__getset(0,__proto,'indexType',function(){
+		return this._indexType;
+	});
+
+	/**
+	*获取索引类型字节数量。
+	*@return 索引类型字节数量。
+	*/
+	__getset(0,__proto,'indexTypeByteCount',function(){
+		return this._indexTypeByteCount;
+	});
+
+	/**
+	*获取索引个数。
+	*@return 索引个数。
+	*/
+	__getset(0,__proto,'indexCount',function(){
+		return this._indexCount;
+	});
+
+	/**
+	*获取是否可读。
+	*@return 是否可读。
+	*/
+	__getset(0,__proto,'canRead',function(){
+		return this._canRead;
+	});
+
+	IndexBuffer3D.INDEXTYPE_UBYTE="ubyte";
+	IndexBuffer3D.INDEXTYPE_USHORT="ushort";
+	return IndexBuffer3D;
+})(Buffer)
 
 
 /**
@@ -56718,6 +56719,21 @@ var MeshRenderStaticBatchManager=(function(_super){
 
 
 /**
+*...
+*@author ...
+*/
+//class laya.webgl.BufferState2D extends laya.webgl.BufferStateBase
+var BufferState2D=(function(_super){
+	function BufferState2D(){
+		BufferState2D.__super.call(this);
+	}
+
+	__class(BufferState2D,'laya.webgl.BufferState2D',_super);
+	return BufferState2D;
+})(BufferStateBase)
+
+
+/**
 *<code>BoxColliderShape</code> 类用于创建盒子形状碰撞器。
 */
 //class laya.d3.physics.shape.BoxColliderShape extends laya.d3.physics.shape.ColliderShape
@@ -56778,21 +56794,6 @@ var BoxColliderShape=(function(_super){
 	]);
 	return BoxColliderShape;
 })(ColliderShape)
-
-
-/**
-*...
-*@author ...
-*/
-//class laya.webgl.BufferState2D extends laya.webgl.BufferStateBase
-var BufferState2D=(function(_super){
-	function BufferState2D(){
-		BufferState2D.__super.call(this);
-	}
-
-	__class(BufferState2D,'laya.webgl.BufferState2D',_super);
-	return BufferState2D;
-})(BufferStateBase)
 
 
 /**
@@ -59764,40 +59765,6 @@ var DropBox=(function(_super){
 
 
 /**
-*子弹脚本，实现子弹飞行逻辑及对象池回收机制
-*/
-//class script.Bullet extends laya.components.Script
-var Bullet=(function(_super){
-	function Bullet(){
-		Bullet.__super.call(this);;
-	}
-
-	__class(Bullet,'script.Bullet',_super);
-	var __proto=Bullet.prototype;
-	__proto.onEnable=function(){
-		var rig=this.owner.getComponent(RigidBody);
-		rig.setVelocity({x:0,y:-10});
-	}
-
-	__proto.onTriggerEnter=function(other,self,contact){
-		this.owner.removeSelf();
-	}
-
-	__proto.onUpdate=function(){
-		if ((this.owner).y <-10){
-			this.owner.removeSelf();
-		}
-	}
-
-	__proto.onDisable=function(){
-		Pool.recover("bullet",this.owner);
-	}
-
-	return Bullet;
-})(Script)
-
-
-/**
 *<p> <code>Sprite</code> 是基本的显示图形的显示列表节点。 <code>Sprite</code> 默认没有宽高，默认不接受鼠标事件。通过 <code>graphics</code> 可以绘制图片或者矢量图，支持旋转，缩放，位移等操作。<code>Sprite</code>同时也是容器类，可用来添加多个子节点。</p>
 *<p>注意： <code>Sprite</code> 默认没有宽高，可以通过<code>getBounds</code>函数获取；也可手动设置宽高；还可以设置<code>autoSize=true</code>，然后再获取宽高。<code>Sprite</code>的宽高一般用于进行碰撞检测和排版，并不影响显示图像大小，如果需要更改显示图像大小，请使用 <code>scaleX</code> ， <code>scaleY</code> ， <code>scale</code>。</p>
 *<p> <code>Sprite</code> 默认不接受鼠标事件，即<code>mouseEnabled=false</code>，但是只要对其监听任意鼠标事件，会自动打开自己以及所有父对象的<code>mouseEnabled=true</code>。所以一般也无需手动设置<code>mouseEnabled</code>。</p>
@@ -61323,6 +61290,40 @@ var Sprite=(function(_super){
 
 	return Sprite;
 })(Node)
+
+
+/**
+*子弹脚本，实现子弹飞行逻辑及对象池回收机制
+*/
+//class script.Bullet extends laya.components.Script
+var Bullet=(function(_super){
+	function Bullet(){
+		Bullet.__super.call(this);;
+	}
+
+	__class(Bullet,'script.Bullet',_super);
+	var __proto=Bullet.prototype;
+	__proto.onEnable=function(){
+		var rig=this.owner.getComponent(RigidBody);
+		rig.setVelocity({x:0,y:-10});
+	}
+
+	__proto.onTriggerEnter=function(other,self,contact){
+		this.owner.removeSelf();
+	}
+
+	__proto.onUpdate=function(){
+		if ((this.owner).y <-10){
+			this.owner.removeSelf();
+		}
+	}
+
+	__proto.onDisable=function(){
+		Pool.recover("bullet",this.owner);
+	}
+
+	return Bullet;
+})(Script)
 
 
 /**
@@ -78975,8 +78976,7 @@ var drawcard=(function(_super){
 		/*no*/this.m_Card_Animatin.on("complete",this,this.recover2);
 	}
 
-	__proto.recover2=function(){
-		if(drawcard.m_Draw_Result>=0){
+	__proto.recover2=function(){{
 			/*no*/this.m_Draw_Result_Sprite.visible=true;
 			var cardindex=Browser.window.GLOBAL_USER_DATA.rows[0].lastcard;
 			/*no*/this.m_Draw_Result_Sprite.texture=GameUtils.getGraphic(cardindex);
@@ -79009,8 +79009,10 @@ var drawcard=(function(_super){
 	__proto.onHttpRequestComplete=function(e){
 		var jo=(JSON.parse(this.m_HR.data));
 		console.log(jo);
-		Browser.window.GLOBAL_USER_DATA=jo;
-		Browser.window.GLOBAL_CLASS_DRAW_CARD.Summon();
+		if(jo.rows[0].id==Browser.window.GLOBAL_DATA.username){
+			Browser.window.GLOBAL_USER_DATA=jo;
+			Browser.window.GLOBAL_CLASS_DRAW_CARD.Summon();
+		}
 	}
 
 	__proto.onEnable=function(){
@@ -79023,126 +79025,6 @@ var drawcard=(function(_super){
 	__proto.onDisable=function(){}
 	drawcard.m_Draw_Result=0;
 	return drawcard;
-})(Scene)
-
-
-//class script.tradelist.tradelist extends laya.display.Scene
-var tradelist=(function(_super){
-	var Item;
-	function tradelist(){
-		tradelist.__super.call(this);;
-	}
-
-	__class(tradelist,'script.tradelist.tradelist',_super);
-	var __proto=tradelist.prototype;
-	__proto.createChildren=function(){
-		_super.prototype.createChildren.call(this);
-		this.loadScene("tradelist/Trade_List");
-	}
-
-	__proto.setup=function(){
-		var list=/*no*/this.m_Trade_List;
-		list.itemRender=Item;
-		list.repeatX=1;
-		list.repeatY=2;
-		list.vScrollBarSkin="";
-		list.selectEnable=true;
-		list.selectHandler=new Handler(this,this.onSelect);
-		list.renderHandler=new Handler(this,this.updateItem);
-		Laya.stage.addChild(list);
-		var data=[];
-		for (var i=0;i < 1;++i){
-			data.push("../../res/ui/listskins/1.jpg");
-			data.push("../../res/ui/listskins/2.jpg");
-			data.push("../../res/ui/listskins/3.jpg");
-			data.push("../../res/ui/listskins/4.jpg");
-			data.push("../../res/ui/listskins/5.jpg");
-		}
-		list.array=data;
-	}
-
-	__proto.updateItem=function(cell,index){
-		cell.setImg(cell.dataSource);
-	}
-
-	__proto.onSelect=function(index){
-		if(index==-1)return;
-		var so=/*no*/this.m_Trade_List.selectedItem;
-		console.log(so);
-		console.log("当前选择的索引："+index);
-		var dlg=new tradingconfirm();
-		dlg.popup();
-		/*no*/this.m_Trade_List.selectedIndex=-1;
-	}
-
-	__proto.To_Card_Detail=function(e){
-		Browser.window.m_CardID=tradelist.m_CardID;
-		Scene.open("carddetail/Card_Detail.scene");
-	}
-
-	__proto.To_Card_List=function(e){
-		Browser.window.m_CardID=tradelist.m_CardID;
-		Scene.open("cardlist/Card_List.scene");
-	}
-
-	__proto.onEnable=function(){
-		tradelist.m_CardID=Browser.window.m_CardID;
-		/*no*/this.m_To_Card_Detail.on("click",this,this.To_Card_Detail);
-		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
-		this.setup();
-		var dlg=new tradingconfirm();
-		dlg.popup();
-		dlg.close();
-	}
-
-	__proto.onDisable=function(){
-		/*no*/this.m_Trade_List.removeSelf();
-	}
-
-	tradelist.m_CardID=1;
-	tradelist.__init$=function(){
-		//class Item extends laya.ui.Box
-		Item=(function(_super){
-			function Item(){
-				this.img=null;
-				this.m_backgroung=null;
-				this.m_label=null;
-				Item.__super.call(this);
-				this.size(Item.WID,Item.HEI);
-				this.m_backgroung=new Sprite();
-				this.img=new Sprite();
-				this.m_label=new Label();
-				this.img.width=150;
-				this.img.height=130;
-				this.img.x=30;
-				this.img.y=30;
-				this.img.zOrder=3;
-				this.m_backgroung.width=580;
-				this.m_backgroung.height=240;
-				this.m_label.x=240;
-				this.m_label.y=60;
-				this.m_label.width=240;
-				this.m_label.height=200;
-				this.m_label.text="潘金莲\n1.0000EOS\n3张";
-				this.m_label.fontSize=48;
-				this.m_label.color="#51c524";
-				this.addChild(this.m_backgroung);
-				this.addChild(this.img);
-				this.addChild(this.m_label);
-			}
-			__class(Item,'',_super);
-			var __proto=Item.prototype;
-			__proto.setImg=function(src){
-				this.img.texture="resource/108graph/"+(tradelist.m_CardID+1).toString()+".jpg"
-				this.m_backgroung.texture="UI/tradelist001.png";
-			}
-			Item.WID=580;
-			Item.HEI=250;
-			return Item;
-		})(Box)
-	}
-
-	return tradelist;
 })(Scene)
 
 
@@ -79324,6 +79206,156 @@ var View=(function(_super){
 })(Scene)
 
 
+//class script.tradelist.tradelist extends laya.display.Scene
+var tradelist=(function(_super){
+	var Item;
+	function tradelist(){
+		tradelist.__super.call(this);;
+	}
+
+	__class(tradelist,'script.tradelist.tradelist',_super);
+	var __proto=tradelist.prototype;
+	__proto.createChildren=function(){
+		_super.prototype.createChildren.call(this);
+		this.loadScene("tradelist/Trade_List");
+	}
+
+	__proto.setup=function(){
+		var list=/*no*/this.m_Trade_List;
+		list.itemRender=Item;
+		list.repeatX=1;
+		list.repeatY=2;
+		list.vScrollBarSkin="";
+		list.selectEnable=true;
+		list.selectHandler=new Handler(this,this.onSelect);
+		list.renderHandler=new Handler(this,this.updateItem);
+		Laya.stage.addChild(list);
+	}
+
+	//list.array=data;
+	__proto.UpdateList=function(){
+		var list=/*no*/this.m_Trade_List;
+		list.array=Browser.window.GLOBAL_TRADE_DATA.rows;
+	}
+
+	__proto.updateItem=function(cell,index){
+		cell.setImg(cell.dataSource);
+	}
+
+	__proto.onSelect=function(index){
+		if(index==-1)return;
+		var so=/*no*/this.m_Trade_List.selectedItem;
+		console.log(so);
+		console.log("当前选择的索引："+index);
+		var dlg=new tradingconfirm();
+		dlg.popup();
+		/*no*/this.m_Trade_List.selectedIndex=-1;
+	}
+
+	__proto.Refresh=function(){
+		/*no*/this.m_HR=new HttpRequest();
+		/*no*/this.m_HR.once("progress",this,this.onHttpRequestProgress);
+		/*no*/this.m_HR.once("complete",this,this.onHttpRequestComplete);
+		/*no*/this.m_HR.once("error",this,this.onHttpRequestError);
+		var postdata="{";
+		postdata+="\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"10\",";
+		postdata+="\"scope\":\""+Browser.window.m_CardID+"\",";
+		postdata+="\"table\":\"topcardb\",";
+		postdata+="\"index_position\":\""+"1"+"\",";
+		postdata+="\"key_type\":\""+"uint64_t"+"\"";
+		postdata+="}";
+		/*no*/this.m_HR.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete=function(e){
+		var jo=(JSON.parse(/*no*/this.m_HR.data));
+		console.log(jo);
+		Browser.window.GLOBAL_TRADE_DATA=jo;
+		Browser.window.GLOBAL_CLASS_TRADE_LIST.UpdateList();
+	}
+
+	__proto.To_Card_Detail=function(e){
+		Browser.window.m_CardID=tradelist.m_CardID;
+		Scene.open("carddetail/Card_Detail.scene");
+	}
+
+	__proto.To_Card_List=function(e){
+		Browser.window.m_CardID=tradelist.m_CardID;
+		Scene.open("cardlist/Card_List.scene");
+	}
+
+	__proto.onEnable=function(){
+		tradelist.m_CardID=Browser.window.m_CardID;
+		Browser.window.GLOBAL_CLASS_TRADE_LIST=this;
+		/*no*/this.m_To_Card_Detail.on("click",this,this.To_Card_Detail);
+		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
+		this.setup();
+		var dlg=new tradingconfirm();
+		dlg.popup();
+		dlg.close();
+		this.Refresh();
+	}
+
+	__proto.onDisable=function(){
+		/*no*/this.m_Trade_List.removeSelf();
+	}
+
+	tradelist.m_CardID=1;
+	tradelist.__init$=function(){
+		//class Item extends laya.ui.Box
+		Item=(function(_super){
+			function Item(){
+				this.img=null;
+				this.m_backgroung=null;
+				this.m_label=null;
+				Item.__super.call(this);
+				this.size(Item.WID,Item.HEI);
+				this.m_backgroung=new Sprite();
+				this.img=new Sprite();
+				this.m_label=new Label();
+				this.img.width=150;
+				this.img.height=130;
+				this.img.x=30;
+				this.img.y=30;
+				this.img.zOrder=3;
+				this.m_backgroung.width=580;
+				this.m_backgroung.height=240;
+				this.m_label.x=240;
+				this.m_label.y=60;
+				this.m_label.width=240;
+				this.m_label.height=200;
+				this.m_label.text="潘金莲\n1.0000EOS\n3张";
+				this.m_label.fontSize=48;
+				this.m_label.color="#51c524";
+				this.addChild(this.m_backgroung);
+				this.addChild(this.img);
+				this.addChild(this.m_label);
+			}
+			__class(Item,'',_super);
+			var __proto=Item.prototype;
+			__proto.setImg=function(src){
+				this.img.texture="resource/108graph/"+(tradelist.m_CardID+1).toString()+".jpg"
+				this.m_backgroung.texture="UI/tradelist001.png";
+				this.m_label.text=src.money;
+			}
+			Item.WID=580;
+			Item.HEI=250;
+			return Item;
+		})(Box)
+	}
+
+	return tradelist;
+})(Scene)
+
+
 //class script.carddetail.carddetail extends laya.display.Scene
 var carddetail=(function(_super){
 	function carddetail(){
@@ -79347,43 +79379,52 @@ var carddetail=(function(_super){
 		Scene.open("cardlist/Card_List.scene");
 	}
 
+	__proto.Sell_Card=function(e){
+		var dlg=new sellcarddialog();
+		dlg.popup();
+	}
+
+	__proto.Refresh=function(){
+		/*no*/this.m_HR=new HttpRequest();
+		/*no*/this.m_HR.once("progress",this,this.onHttpRequestProgress);
+		/*no*/this.m_HR.once("complete",this,this.onHttpRequestComplete);
+		/*no*/this.m_HR.once("error",this,this.onHttpRequestError);
+		var postdata="{\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"1\",\"scope\":\""+"gameofcrown1"+"\",\"table\":\"topuserb\","+"\"lower_bound\":\""+Browser.window.GLOBAL_DATA.username+"\""+"}";
+		/*no*/this.m_HR.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete=function(e){
+		var jo=(JSON.parse(/*no*/this.m_HR.data));
+		console.log(jo);
+		if(jo.rows[0].id==Browser.window.GLOBAL_DATA.username){
+			Browser.window.GLOBAL_USER_DATA=jo;
+		}
+	}
+
 	__proto.onEnable=function(){
 		carddetail.m_CardID=Browser.window.m_CardID;
+		Browser.window.GLOBAL_CLASS_CARD_DETAIL=this;
 		/*no*/this.m_To_Trad_List.on("click",this,this.To_Trad_List);
 		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
+		/*no*/this.m_Sell_Card_Button.on("click",this,this.Sell_Card);
 		/*no*/this.m_Card.texture="resource/108graph/"+(carddetail.m_CardID+1).toString()+".jpg";
+		var dlg=new sellcarddialog();
+		dlg.popup();
+		dlg.close();
 	}
 
 	__proto.onDisable=function(){}
 	carddetail.m_CardID=1;
 	return carddetail;
 })(Scene)
-
-
-/**
-*<code>Box</code> 类是一个控件容器类。
-*/
-//class laya.ui.Box extends laya.ui.UIComponent
-var Box=(function(_super){
-	function Box(){
-		Box.__super.call(this);;
-	}
-
-	__class(Box,'laya.ui.Box',_super);
-	var __proto=Box.prototype;
-	Laya.imps(__proto,{"laya.ui.IBox":true})
-	/**@inheritDoc */
-	__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
-		this._dataSource=value;
-		for (var name in value){
-			var comp=this.getChildByName(name);
-			if (comp)comp.dataSource=value[name];
-			else if (this.hasOwnProperty(name)&& !((typeof (this[name])=='function')))this[name]=value[name];
-		}
-	});
-
-	return Box;
-})(UIComponent)
 
 
 //class ui.test.TestSceneUI extends laya.display.Scene
@@ -79507,7 +79548,7 @@ var cardlist=(function(_super){
 		/*no*/this.m_HR.once("progress",this,this.onHttpRequestProgress);
 		/*no*/this.m_HR.once("complete",this,this.onHttpRequestComplete);
 		/*no*/this.m_HR.once("error",this,this.onHttpRequestError);
-		var postdata="{\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"100\",\"scope\":\""+"gameofcrown1"+"\",\"table\":\"topuserb\"}";
+		var postdata="{\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"1\",\"scope\":\""+"gameofcrown1"+"\",\"table\":\"topuserb\","+"\"lower_bound\":\""+Browser.window.GLOBAL_DATA.username+"\""+"}";
 		/*no*/this.m_HR.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
 	}
 
@@ -79522,8 +79563,10 @@ var cardlist=(function(_super){
 	__proto.onHttpRequestComplete=function(e){
 		var jo=(JSON.parse(/*no*/this.m_HR.data));
 		console.log(jo);
-		Browser.window.GLOBAL_USER_DATA=jo;
-		Browser.window.GLOBAL_CLASS_CARD_LIST.UpdateContainer();
+		if(jo.rows[0].id==Browser.window.GLOBAL_DATA.username){
+			Browser.window.GLOBAL_USER_DATA=jo;
+			Browser.window.GLOBAL_CLASS_CARD_LIST.UpdateContainer();
+		}
 	}
 
 	/*
@@ -79599,6 +79642,68 @@ var TestPhysicsUI=(function(_super){
 	}
 
 	return TestPhysicsUI;
+})(Scene)
+
+
+/**
+*<code>Box</code> 类是一个控件容器类。
+*/
+//class laya.ui.Box extends laya.ui.UIComponent
+var Box=(function(_super){
+	function Box(){
+		Box.__super.call(this);;
+	}
+
+	__class(Box,'laya.ui.Box',_super);
+	var __proto=Box.prototype;
+	Laya.imps(__proto,{"laya.ui.IBox":true})
+	/**@inheritDoc */
+	__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
+		this._dataSource=value;
+		for (var name in value){
+			var comp=this.getChildByName(name);
+			if (comp)comp.dataSource=value[name];
+			else if (this.hasOwnProperty(name)&& !((typeof (this[name])=='function')))this[name]=value[name];
+		}
+	});
+
+	return Box;
+})(UIComponent)
+
+
+//class script.gamenavi.gamenavi extends laya.display.Scene
+var gamenavi=(function(_super){
+	function gamenavi(){
+		gamenavi.__super.call(this);;
+	}
+
+	__class(gamenavi,'script.gamenavi.gamenavi',_super);
+	var __proto=gamenavi.prototype;
+	/**@prop {name:intType,tips:"整数类型示例",type:Int,default:1000}*/
+	__proto.createChildren=function(){
+		_super.prototype.createChildren.call(this);
+		this.loadScene("gamenavi/Game_Navi");
+		/*no*/this.m_Gold_Gen_Animation.loadAtlas("resource/eosgold/gen.atlas",Handler.create(this,this.onLoaded));
+		/*no*/this.m_Gold_Loop_Animation.loadAtlas("resource/eosgold/loop.atlas",Handler.create(this,this.onLoaded));
+	}
+
+	//m_Ani_Card.play(0,true,"dizziness");
+	__proto.onLoaded=function(){
+		/*no*/this.m_Gold_Gen_Animation.visible=true;
+		/*no*/this.m_Gold_Loop_Animation.visible=false;
+		/*no*/this.m_Gold_Gen_Animation.play(0,false);
+		/*no*/this.m_Gold_Gen_Animation.on("complete",this,this.recover0);
+	}
+
+	__proto.recover0=function(){
+		/*no*/this.m_Gold_Gen_Animation.visible=false;
+		/*no*/this.m_Gold_Loop_Animation.visible=true;
+		/*no*/this.m_Gold_Loop_Animation.play();
+	}
+
+	__proto.onEnable=function(){}
+	__proto.onDisable=function(){}
+	return gamenavi;
 })(Scene)
 
 
@@ -91972,6 +92077,43 @@ var HSlider=(function(_super){
 })(Slider)
 
 
+//class script.carddetail.sellcarddialog extends laya.ui.Dialog
+var sellcarddialog=(function(_super){
+	function sellcarddialog(){
+		sellcarddialog.__super.call(this);;
+	}
+
+	__class(sellcarddialog,'script.carddetail.sellcarddialog',_super);
+	var __proto=sellcarddialog.prototype;
+	__proto.createChildren=function(){
+		laya.display.Scene.prototype.createChildren.call(this);
+		this.loadScene("carddetail/Sell_Card");
+	}
+
+	__proto.onCancelClick=function(e){
+		this.close();
+	}
+
+	__proto.onConfirmClick=function(e){
+		var asset=parseInt(/*no*/this.m_Card_Asset_Text.text);
+		asset*=10000;
+		var num=parseInt(/*no*/this.m_Card_NUM_Text.text);
+		Browser.window.login();
+		(/*no*/this.code,/*no*/this.user,/*no*/this.cardid,/*no*/this.cardnum,asset)
+		Browser.window.action_transfer_callback("gameofcrown1",Browser.window.GLOBAL_DATA.username,Browser.window.m_CardID,num,asset,function(){Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();});
+		this.close();
+	}
+
+	__proto.onEnable=function(){
+		/*no*/this.m_Cancel.on("click",this,this.onCancelClick);
+		/*no*/this.m_Confirm.on("click",this,this.onConfirmClick);
+	}
+
+	__proto.onDisable=function(){}
+	return sellcarddialog;
+})(Dialog)
+
+
 //class script.tradelist.tradingconfirm extends laya.ui.Dialog
 var tradingconfirm=(function(_super){
 	function tradingconfirm(){
@@ -92538,7 +92680,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([LoaderManager,EventDispatcher,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,tradelist,LocalStorage,View,CallLater,GraphicAnimation,Physics,Path]);
+	Laya.__init([EventDispatcher,LoaderManager,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,CallLater,GraphicAnimation,tradelist,View,Physics,Path]);
 	/**LayaGameStart**/
 	new Main();
 
