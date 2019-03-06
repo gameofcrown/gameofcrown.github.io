@@ -92152,7 +92152,7 @@ var sellcarddialog=(function(_super){
 		asset*=10000;
 		var num=parseInt(/*no*/this.m_Card_NUM_Text.text);
 		Browser.window.login();
-		Browser.window.action_transfer_callback("gameofcrown1",Browser.window.GLOBAL_DATA.username,Browser.window.m_CardID,num,asset,function(){Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();Browser.window.GLOBAL_CLASS_CARD_DETAIL.m_Dlg.close();});
+		Browser.window.action_sell_card("gameofcrown1",Browser.window.GLOBAL_DATA.username,Browser.window.m_CardID,num,asset,function(){Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();Browser.window.GLOBAL_CLASS_CARD_DETAIL.m_Dlg.close();});
 	}
 
 	//close();
