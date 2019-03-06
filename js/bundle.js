@@ -1242,7 +1242,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="tradelist/Trade_List.scene";
+	GameConfig.startScene="gamelogo/Game_Logo.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -79380,8 +79380,8 @@ var carddetail=(function(_super){
 	}
 
 	__proto.Sell_Card=function(e){
-		var dlg=new sellcarddialog();
-		dlg.popup();
+		/*no*/this.m_Dlg=new sellcarddialog();
+		/*no*/this.m_Dlg.popup();
 	}
 
 	__proto.Refresh=function(){
@@ -79416,13 +79416,17 @@ var carddetail=(function(_super){
 		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
 		/*no*/this.m_Sell_Card_Button.on("click",this,this.Sell_Card);
 		/*no*/this.m_Card.texture="resource/108graph/"+(carddetail.m_CardID+1).toString()+".jpg";
-		var dlg=new sellcarddialog();
-		dlg.popup();
-		dlg.close();
+		/*no*/this.m_Dlg=new sellcarddialog();
+		/*no*/this.m_Dlg.popup();
+		/*no*/this.m_Dlg.close();
 	}
 
 	__proto.onDisable=function(){}
 	carddetail.m_CardID=1;
+	carddetail.__init$=function(){
+		m_Dlg:sellcarddialog;
+	}
+
 	return carddetail;
 })(Scene)
 
@@ -79671,6 +79675,7 @@ var Box=(function(_super){
 })(UIComponent)
 
 
+;
 //class script.gamenavi.gamenavi extends laya.display.Scene
 var gamenavi=(function(_super){
 	function gamenavi(){
@@ -79688,6 +79693,11 @@ var gamenavi=(function(_super){
 	}
 
 	//m_Ani_Card.play(0,true,"dizziness");
+	__proto.UpdateData=function(){
+		var str=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].pool;
+		/*no*/this.m_Jackpot_Text.text="大奖:"+str;
+	}
+
 	__proto.onLoaded=function(){
 		/*no*/this.m_Gold_Gen_Animation.visible=true;
 		/*no*/this.m_Gold_Loop_Animation.visible=false;
@@ -79701,7 +79711,50 @@ var gamenavi=(function(_super){
 		/*no*/this.m_Gold_Loop_Animation.play();
 	}
 
-	__proto.onEnable=function(){}
+	__proto.Refresh=function(){
+		/*no*/this.m_HR=new HttpRequest();
+		/*no*/this.m_HR.once("progress",this,this.onHttpRequestProgress);
+		/*no*/this.m_HR.once("complete",this,this.onHttpRequestComplete);
+		/*no*/this.m_HR.once("error",this,this.onHttpRequestError);
+		var postdata="{";
+		postdata+="\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"10\",";
+		postdata+="\"scope\":\""+"gameofcrown1"+"\",";
+		postdata+="\"table\":\"topglbb\"";
+		postdata+="}";
+		/*no*/this.m_HR.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete=function(e){
+		var jo=(JSON.parse(/*no*/this.m_HR.data));
+		console.log(jo);
+		Browser.window.GLOBAL_JACKPOT_DATA=jo;
+		Browser.window.GLOBAL_CLASS_GAME_NAVI.UpdateData();
+	}
+
+	__proto.To_Trad_List=function(e){
+		Browser.window.m_CardID=/*no*/this.m_CardID;
+		Scene.open("tradelist/Trade_List.scene");
+	}
+
+	__proto.To_Card_List=function(e){
+		Browser.window.m_CardID=/*no*/this.m_CardID;
+		Scene.open("cardlist/Card_List.scene");
+	}
+
+	__proto.onEnable=function(){
+		Browser.window.GLOBAL_CLASS_GAME_NAVI=this;
+		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
+		this.Refresh();
+	}
+
 	__proto.onDisable=function(){}
 	return gamenavi;
 })(Scene)
@@ -79722,7 +79775,7 @@ var gamelogo=(function(_super){
 	}
 
 	__proto.onTipClick=function(e){
-		Scene.open("cardlist/Card_List.scene");
+		Scene.open("gamenavi/Game_Navi.scene");
 	}
 
 	__proto.onEnable=function(){
@@ -92099,11 +92152,10 @@ var sellcarddialog=(function(_super){
 		asset*=10000;
 		var num=parseInt(/*no*/this.m_Card_NUM_Text.text);
 		Browser.window.login();
-		(/*no*/this.code,/*no*/this.user,/*no*/this.cardid,/*no*/this.cardnum,asset)
-		Browser.window.action_transfer_callback("gameofcrown1",Browser.window.GLOBAL_DATA.username,Browser.window.m_CardID,num,asset,function(){Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();});
-		this.close();
+		Browser.window.action_transfer_callback("gameofcrown1",Browser.window.GLOBAL_DATA.username,Browser.window.m_CardID,num,asset,function(){Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();Browser.window.GLOBAL_CLASS_CARD_DETAIL.m_Dlg.close();});
 	}
 
+	//close();
 	__proto.onEnable=function(){
 		/*no*/this.m_Cancel.on("click",this,this.onCancelClick);
 		/*no*/this.m_Confirm.on("click",this,this.onConfirmClick);
@@ -92680,7 +92732,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,CallLater,GraphicAnimation,tradelist,View,Physics,Path]);
+	Laya.__init([EventDispatcher,LoaderManager,CharBook,carddetail,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,CallLater,GraphicAnimation,tradelist,Physics,View,Path]);
 	/**LayaGameStart**/
 	new Main();
 
