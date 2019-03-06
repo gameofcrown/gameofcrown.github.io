@@ -1,4 +1,12 @@
 
+function _GLOBAL_DATA()
+{
+    this.username="gigaofcolony";
+    this.userinfo=null;
+}
+
+var GLOBAL_DATA= new _GLOBAL_DATA();
+
 ScatterJS.plugins(new ScatterEOS());
 
 
