@@ -63,4 +63,4 @@ window.login = async () => {
 window.logout = () => {
     scatter.forgetIdentity();
 };
-login();
+//login();

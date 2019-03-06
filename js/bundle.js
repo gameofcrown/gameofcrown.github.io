@@ -78951,7 +78951,8 @@ var drawcard=(function(_super){
 	}
 
 	__proto.onSummonClick=function(e){
-		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"game","1.0000 EOS","STARDUSTBU0$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+		Browser.window.login();
+		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","1.0000 EOS","STARDUSTBU0$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
 	}
 
 	//Summon();
