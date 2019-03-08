@@ -1244,7 +1244,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="gamenavi/Game_Navi.scene";
+	GameConfig.startScene="gamelogo/Game_Logo.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -79512,13 +79512,13 @@ var cardlist=(function(_super){
 	}
 
 	__proto.onSummonClick=function(e){
-		Scene.open("drawcard/Draw_Card.scene");
+		Scene.open("gamenavi/Game_Navi.scene");
 	}
 
 	__proto.onImgClick=function(e){
 		var ii=cardlist.m_Inst.m_Imglist.indexOf(this);
 		Browser.window.m_CardID=ii+cardlist.m_PageIndex*cardlist.m_PageCapacity;
-		Scene.open("gamenavi/Game_Navi.scene");
+		Scene.open("carddetail/Card_Detail.scene");
 	}
 
 	__proto.UpdateContainer=function(){
