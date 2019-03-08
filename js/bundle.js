@@ -1240,11 +1240,11 @@ var GameConfig=(function(){
 
 	GameConfig.width=640;
 	GameConfig.height=1136;
-	GameConfig.scaleMode="showall";
+	GameConfig.scaleMode="exactfit";
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="userinfo/User_Info.scene";
+	GameConfig.startScene="gamelogo/Game_Logo.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -79948,7 +79948,7 @@ var userinfo=(function(_super){
 		this.m_HR_DUST.once("progress",this,this.onHttpRequestProgress_DUST);
 		this.m_HR_DUST.once("complete",this,this.onHttpRequestComplete_DUST);
 		this.m_HR_DUST.once("error",this,this.onHttpRequestError_DUST);
-		var postdata="{\"code\":\"gameofcrown2\",\"account\":\""+Browser.window.GLOBAL_DATA.username+"\",\"symbol\":\""+"TOP"+"\"}";
+		var postdata="{\"code\":\"gameofcrown2\",\"account\":\""+Browser.window.GLOBAL_DATA.username+"\",\"symbol\":\""+"DUST"+"\"}";
 		this.m_HR_DUST.send('https://geo.eosasia.one:443/v1/chain/get_currency_balance',postdata,'post','text');
 	}
 
