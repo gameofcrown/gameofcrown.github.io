@@ -1244,7 +1244,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="gamelogo/Game_Logo.scene";
+	GameConfig.startScene="userinfo/User_Info.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -79642,6 +79642,7 @@ var cardlist=(function(_super){
 
 	__proto.onEnable=function(){
 		Browser.window.GLOBAL_CLASS_CARD_LIST=this;
+		this.Refresh();
 		/*no*/this.m_Prev_Button.on("click",this,this.onPrevClick);
 		/*no*/this.m_Next_Button.on("click",this,this.onNextClick);
 		/*no*/this.m_Summon_Button.on("click",this,this.onSummonClick);
@@ -79854,6 +79855,7 @@ var userinfo=(function(_super){
 	function userinfo(){
 		this.m_HR_EOS=null;
 		this.m_HR_DUST=null;
+		this.m_HR_USER=null;
 		userinfo.__super.call(this);
 	}
 
@@ -79866,6 +79868,20 @@ var userinfo=(function(_super){
 
 	__proto.animateTimeBased=function(){
 		var date=new Date();
+		this.m_CurrentUTC=date.valueOf();
+		var m_DivTS=0;
+		try{
+			m_DivTS=parseInt(Browser.window.GLOBAL_USER_DATA.rows[0].diviendcd);
+			}catch(e){
+		}
+		m_DivTS/=1000;
+		m_DivTS=this.m_CurrentUTC-m_DivTS;
+		m_DivTS/=1000*3600.0;
+		m_DivTS=20.0-m_DivTS;
+		if(m_DivTS<0){
+			m_DivTS=0;
+		}
+		/*no*/this.m_Debug_Label.text="距下次分红还有"+m_DivTS.toFixed(2)+"小时.";
 		console.log(date.valueOf());
 	}
 
@@ -79887,10 +79903,11 @@ var userinfo=(function(_super){
 		/*no*/this.m_To_Game_Navi_Button.on("click",this,this.onBackToNavi);
 		/*no*/this.m_Jackpot_Button.on("click",this,this.onJackpotClick);
 		/*no*/this.m_Dividend_Button.on("click",this,this.onDividendClick);
-		Browser.window.GLOBAL_CLASSUSER_INFO=this;
+		Browser.window.GLOBAL_CLASS_USER_INFO=this;
 		Laya.timer.loop(2000,this,this.animateTimeBased);
 		this.Refresh();
 		this.Refresh_DUST();
+		this.Refresh_USER();
 	}
 
 	__proto.onDisable=function(){}
@@ -79952,9 +79969,36 @@ var userinfo=(function(_super){
 		}
 	}
 
+	//Browser.window.GLOBAL_CLASS_CARD_LIST.UpdateContainer();
+	__proto.Refresh_USER=function(){
+		this.m_HR_USER=new HttpRequest();
+		this.m_HR_USER.once("progress",this,this.onHttpRequestProgress_USER);
+		this.m_HR_USER.once("complete",this,this.onHttpRequestComplete_USER);
+		this.m_HR_USER.once("error",this,this.onHttpRequestError_USER);
+		var postdata="{\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"1\",\"scope\":\""+"gameofcrown1"+"\",\"table\":\"topuserb\","+"\"lower_bound\":\""+Browser.window.GLOBAL_DATA.username+"\""+"}";
+		this.m_HR_USER.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError_USER=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress_USER=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete_USER=function(e){
+		var jo=(JSON.parse(this.m_HR_USER.data));
+		console.log(jo);
+		if(jo.rows[0].id==Browser.window.GLOBAL_DATA.username){
+			Browser.window.GLOBAL_USER_DATA=jo;
+			Browser.window.GLOBAL_CLASS_USER_INFO.UpdateData();
+		}
+	}
+
 	/////////////////////////////////////////////////////////////////////
 	__proto.UpdateData=function(){
-		/*no*/this.m_Asset_Label.text=Browser.window.GLOBAL_DATA.user_asset_eos+"\n"+Browser.window.GLOBAL_DATA.user_asset_dust;
+		/*no*/this.m_Asset_Label.text="余额:\n"+Browser.window.GLOBAL_DATA.user_asset_eos+"\n"+Browser.window.GLOBAL_DATA.user_asset_dust;
 	}
 
 	return userinfo;
