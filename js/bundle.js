@@ -1220,6 +1220,7 @@ var GameConfig=(function(){
 	GameConfig.init=function(){
 		var reg=ClassUtils.regClass;
 		reg("script.carddetail.carddetail",carddetail);
+		reg("script.carddetail.sellcarddialog",sellcarddialog);
 		reg("script.cardlist.cardlist",cardlist);
 		reg("script.drawcard.drawcard",drawcard);
 		reg("script.gamelogo.gamelogo",gamelogo);
@@ -1230,6 +1231,7 @@ var GameConfig=(function(){
 		reg("script.GameControl",GameControl);
 		reg("script.tradelist.tradelist",tradelist);
 		reg("script.tradelist.tradingconfirm",tradingconfirm);
+		reg("script.userinfo.userinfo",userinfo);
 		reg("laya.physics.CircleCollider",CircleCollider);
 		reg("script.Bullet",Bullet);
 		reg("laya.display.Text",Text);
@@ -1242,7 +1244,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="gamelogo/Game_Logo.scene";
+	GameConfig.startScene="gamenavi/Game_Navi.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -42750,6 +42752,396 @@ var LoaderManager=(function(_super){
 
 
 /**
+*2D刚体，显示对象通过RigidBody和物理世界进行绑定，保持物理和显示对象之间的位置同步
+*物理世界的位置变化会自动同步到显示对象，显示对象本身的位移，旋转（父对象位移无效）也会自动同步到物理世界
+*由于引擎限制，暂时不支持以下情形：
+*1.不支持绑定节点缩放
+*2.不支持绑定节点的父节点缩放和旋转
+*3.不支持实时控制父对象位移，IDE内父对象位移是可以的
+*如果想整体位移物理世界，可以Physics.I.worldRoot=场景，然后移动场景即可
+*可以通过IDE-"项目设置" 开启物理辅助线显示，或者通过代码PhysicsDebugDraw.enable();
+*/
+//class laya.physics.RigidBody extends laya.components.Component
+var RigidBody=(function(_super){
+	function RigidBody(){
+		/**
+		*刚体类型，支持三种类型static，dynamic和kinematic类型，默认为dynamic类型
+		*static为静态类型，静止不动，不受重力影响，质量无限大，可以通过节点移动，旋转，缩放进行控制
+		*dynamic为动态类型，受重力影响
+		*kinematic为运动类型，不受重力影响，可以通过施加速度或者力的方式使其运动
+		*/
+		this._type="dynamic";
+		/**是否允许休眠，允许休眠能提高性能*/
+		this._allowSleep=true;
+		/**角速度，设置会导致旋转*/
+		this._angularVelocity=0;
+		/**旋转速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
+		this._angularDamping=0;
+		/**线性运动速度，比如{x:10,y:10}*/
+		this._linearVelocity={x:0,y:0};
+		/**线性速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
+		this._linearDamping=0;
+		/**是否高速移动的物体，设置为true，可以防止高速穿透*/
+		this._bullet=false;
+		/**是否允许旋转，如果不希望刚体旋转，这设置为false*/
+		this._allowRotation=true;
+		/**重力缩放系数，设置为0为没有重力*/
+		this._gravityScale=1;
+		/**[只读] 指定了该主体所属的碰撞组，默认为0，碰撞规则如下：
+		*1.如果两个对象group相等
+		*group值大于零，它们将始终发生碰撞
+		*group值小于零，它们将永远不会发生碰撞
+		*group值等于0，则使用规则3
+		*2.如果group值不相等，则使用规则3
+		*3.每个刚体都有一个category类别，此属性接收位字段，范围为[1,2^31]范围内的2的幂
+		*每个刚体也都有一个mask类别，指定与其碰撞的类别值之和（值是所有category按位AND的值）
+		*/
+		this.group=0;
+		/**[只读]碰撞类别，使用2的幂次方值指定，有32种不同的碰撞类别可用*/
+		this.category=1;
+		/**[只读]指定冲突位掩码碰撞的类别，category位操作的结果*/
+		this.mask=-1;
+		/**[只读]自定义标签*/
+		this.label="RigidBody";
+		/**[只读]原始刚体*/
+		this._body=null;
+		RigidBody.__super.call(this);
+	}
+
+	__class(RigidBody,'laya.physics.RigidBody',_super);
+	var __proto=RigidBody.prototype;
+	__proto._createBody=function(){
+		if (this._body)return;
+		var sp=this.owner;
+		var box2d=window.box2d;
+		var def=new box2d.b2BodyDef();
+		var point=(this.owner).localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
+		def.position.Set(point.x / Physics.PIXEL_RATIO,point.y / Physics.PIXEL_RATIO);
+		def.angle=Utils.toRadian(sp.rotation);
+		def.allowSleep=this._allowSleep;
+		def.angularDamping=this._angularDamping;
+		def.angularVelocity=this._angularVelocity;
+		def.bullet=this._bullet;
+		def.fixedRotation=!this._allowRotation;
+		def.gravityScale=this._gravityScale;
+		def.linearDamping=this._linearDamping;
+		var obj=this._linearVelocity;
+		if (obj && obj.x !=0 || obj.y !=0){
+			def.linearVelocity=new box2d.b2Vec2(obj.x,obj.y);
+		}
+		def.type=box2d.b2BodyType["b2_"+this._type+"Body"];
+		this._body=Physics.I._createBody(def);
+		this.resetCollider(false);
+	}
+
+	__proto._onAwake=function(){
+		this._createBody();
+	}
+
+	__proto._onEnable=function(){
+		var _$this=this;
+		this._createBody();
+		Laya.physicsTimer.frameLoop(1,this,this._sysPhysicToNode);
+		var sp=this.owner;
+		if (sp._$set_x && !sp._changeByRigidBody){
+			sp._changeByRigidBody=true;
+			function setX (value){
+				sp._$set_x(value);
+				_$this._sysPosToPhysic();
+			}
+			this._overSet(sp,"x",setX);
+			function setY (value){
+				sp._$set_y(value);
+				_$this._sysPosToPhysic();
+			};
+			this._overSet(sp,"y",setY);
+			function setRotation (value){
+				sp._$set_rotation(value);
+				_$this._sysNodeToPhysic();
+			};
+			this._overSet(sp,"rotation",setRotation);
+			function setScaleX (value){
+				sp._$set_scaleX(value);
+				_$this.resetCollider(true);
+			};
+			this._overSet(sp,"scaleX",setScaleX);
+			function setScaleY (value){
+				sp._$set_scaleY(value);
+				_$this.resetCollider(true);
+			};
+			this._overSet(sp,"scaleY",setScaleY);
+		}
+	}
+
+	/**
+	*重置Collider
+	*@param resetShape 是否先重置形状，比如缩放导致碰撞体变化
+	*/
+	__proto.resetCollider=function(resetShape){
+		var comps=this.owner.getComponents(ColliderBase);
+		if (comps){
+			for (var i=0,n=comps.length;i < n;i++){
+				var collider=comps[i];
+				collider.rigidBody=this;
+				if (resetShape)collider.resetShape();
+				else collider.refresh();
+			}
+		}
+	}
+
+	/**@private 同步物理坐标到游戏坐标*/
+	__proto._sysPhysicToNode=function(){
+		if (this.type !="static" && this._body.IsAwake()){
+			var pos=this._body.GetPosition();
+			var ang=this._body.GetAngle();
+			var sp=this.owner;
+			sp._$set_rotation(Utils.toAngle(ang)-(sp.parent).globalRotation);
+			if (ang==0){
+				var point=sp.parent.globalToLocal(Point.TEMP.setTo(pos.x *Physics.PIXEL_RATIO+sp.pivotX,pos.y *Physics.PIXEL_RATIO+sp.pivotY),false,Physics.I.worldRoot);
+				sp._$set_x(point.x);
+				sp._$set_y(point.y);
+				}else {
+				point=sp.globalToLocal(Point.TEMP.setTo(pos.x *Physics.PIXEL_RATIO,pos.y *Physics.PIXEL_RATIO),false,Physics.I.worldRoot);
+				point.x+=sp.pivotX;
+				point.y+=sp.pivotY;
+				point=sp.toParentPoint(point);
+				sp._$set_x(point.x);
+				sp._$set_y(point.y);
+			}
+		}
+	}
+
+	/**@private 同步节点坐标及旋转到物理世界*/
+	__proto._sysNodeToPhysic=function(){
+		var sp=(this.owner);
+		this._body.SetAngle(Utils.toRadian(sp.rotation));
+		var p=sp.localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
+		this._body.SetPositionXY(p.x / Physics.PIXEL_RATIO,p.y / Physics.PIXEL_RATIO);
+	}
+
+	/**@private 同步节点坐标到物理世界*/
+	__proto._sysPosToPhysic=function(){
+		var sp=(this.owner);
+		var p=sp.localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
+		this._body.SetPositionXY(p.x / Physics.PIXEL_RATIO,p.y / Physics.PIXEL_RATIO);
+	}
+
+	/**@private */
+	__proto._overSet=function(sp,prop,getfun){
+		Object.defineProperty(sp,prop,{get:sp["_$get_"+prop],set:getfun,enumerable:false,configurable:true});;
+	}
+
+	__proto._onDisable=function(){
+		Laya.physicsTimer.clear(this,this._sysPhysicToNode);
+		Physics.I._removeBody(this._body);
+		this._body=null;
+		var owner=this.owner;
+		if (owner._changeByRigidBody){
+			this._overSet(owner,"x",owner._$set_x);
+			this._overSet(owner,"y",owner._$set_y);
+			this._overSet(owner,"rotation",owner._$set_rotation);
+			this._overSet(owner,"scaleX",owner._$set_scaleX);
+			this._overSet(owner,"scaleY",owner._$set_scaleY);
+			owner._changeByRigidBody=false;
+		}
+	}
+
+	/**获得原始body对象 */
+	__proto.getBody=function(){
+		if (!this._body)this._onAwake();
+		return this._body;
+	}
+
+	/**
+	*对刚体施加力
+	*@param position 施加力的点，如{x:100,y:100}，全局坐标
+	*@param force 施加的力，如{x:0.1,y:0.1}
+	*/
+	__proto.applyForce=function(position,force){
+		if (!this._body)this._onAwake();
+		this._body.ApplyForce(force,position);
+	}
+
+	/**
+	*从中心点对刚体施加力，防止对象旋转
+	*@param force 施加的力，如{x:0.1,y:0.1}
+	*/
+	__proto.applyForceToCenter=function(force){
+		if (!this._body)this._onAwake();
+		this._body.ApplyForceToCenter(force);
+	}
+
+	/**
+	*施加速度冲量，添加的速度冲量会与刚体原有的速度叠加，产生新的速度
+	*@param position 施加力的点，如{x:100,y:100}，全局坐标
+	*@param impulse 施加的速度冲量，如{x:0.1,y:0.1}
+	*/
+	__proto.applyLinearImpulse=function(position,impulse){
+		if (!this._body)this._onAwake();
+		this._body.ApplyLinearImpulse(impulse,position);
+	}
+
+	/**
+	*施加速度冲量，添加的速度冲量会与刚体原有的速度叠加，产生新的速度
+	*@param impulse 施加的速度冲量，如{x:0.1,y:0.1}
+	*/
+	__proto.applyLinearImpulseToCenter=function(impulse){
+		if (!this._body)this._onAwake();
+		this._body.ApplyLinearImpulseToCenter(impulse);
+	}
+
+	/**
+	*对刚体施加扭矩，使其旋转
+	*@param torque 施加的扭矩
+	*/
+	__proto.applyTorque=function(torque){
+		if (!this._body)this._onAwake();
+		this._body.ApplyTorque(torque);
+	}
+
+	/**
+	*设置速度，比如{x:10,y:10}
+	*@param velocity
+	*/
+	__proto.setVelocity=function(velocity){
+		if (!this._body)this._onAwake();
+		this._body.SetLinearVelocity(velocity);
+	}
+
+	/**
+	*设置角度
+	*@param value 单位为弧度
+	*/
+	__proto.setAngle=function(value){
+		if (!this._body)this._onAwake();
+		this._body.SetAngle(value);
+		this._body.SetAwake(true);
+	}
+
+	/**获得刚体质量*/
+	__proto.getMass=function(){
+		return this._body ? this._body.GetMass():0;
+	}
+
+	/**
+	*获得质心的相对节点0,0点的位置偏移
+	*/
+	__proto.getCenter=function(){
+		if (!this._body)this._onAwake();
+		var p=this._body.GetLocalCenter();
+		p.x=p.x *Physics.PIXEL_RATIO;
+		p.y=p.y *Physics.PIXEL_RATIO;
+		return p;
+	}
+
+	/**
+	*获得质心的世界坐标，相对于Physics.I.worldRoot节点
+	*/
+	__proto.getWorldCenter=function(){
+		if (!this._body)this._onAwake();
+		var p=this._body.GetWorldCenter();
+		p.x=p.x *Physics.PIXEL_RATIO;
+		p.y=p.y *Physics.PIXEL_RATIO;
+		return p;
+	}
+
+	/**[只读]获得原始body对象 */
+	__getset(0,__proto,'body',function(){
+		if (!this._body)this._onAwake();
+		return this._body;
+	});
+
+	/**是否允许休眠，允许休眠能提高性能*/
+	__getset(0,__proto,'allowSleep',function(){
+		return this._allowSleep;
+		},function(value){
+		this._allowSleep=value;
+		if (this._body)this._body.SetSleepingAllowed(value);
+	});
+
+	/**
+	*刚体类型，支持三种类型static，dynamic和kinematic类型
+	*static为静态类型，静止不动，不受重力影响，质量无限大，可以通过节点移动，旋转，缩放进行控制
+	*dynamic为动态类型，接受重力影响
+	*kinematic为运动类型，不受重力影响，可以通过施加速度或者力的方式使其运动
+	*/
+	__getset(0,__proto,'type',function(){
+		return this._type;
+		},function(value){
+		this._type=value;
+		if (this._body)this._body.SetType(window.box2d.b2BodyType["b2_"+this._type+"Body"]);
+	});
+
+	/**旋转速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
+	__getset(0,__proto,'angularDamping',function(){
+		return this._angularDamping;
+		},function(value){
+		this._angularDamping=value;
+		if (this._body)this._body.SetAngularDamping(value);
+	});
+
+	/**重力缩放系数，设置为0为没有重力*/
+	__getset(0,__proto,'gravityScale',function(){
+		return this._gravityScale;
+		},function(value){
+		this._gravityScale=value;
+		if (this._body)this._body.SetGravityScale(value);
+	});
+
+	/**是否允许旋转，如果不希望刚体旋转，这设置为false*/
+	__getset(0,__proto,'allowRotation',function(){
+		return this._allowRotation;
+		},function(value){
+		this._allowRotation=value;
+		if (this._body)this._body.SetFixedRotation(!value);
+	});
+
+	/**线性速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
+	__getset(0,__proto,'linearDamping',function(){
+		return this._linearDamping;
+		},function(value){
+		this._linearDamping=value;
+		if (this._body)this._body.SetLinearDamping(value);
+	});
+
+	/**角速度，设置会导致旋转*/
+	__getset(0,__proto,'angularVelocity',function(){
+		if (this._body)return this._body.GetAngularVelocity();
+		return this._angularVelocity;
+		},function(value){
+		this._angularVelocity=value;
+		if (this._body)this._body.SetAngularVelocity(value);
+	});
+
+	/**线性运动速度，比如{x:5,y:5}*/
+	__getset(0,__proto,'linearVelocity',function(){
+		if (this._body){
+			var vec=this._body.GetLinearVelocity();
+			return {x:vec.x,y:vec.y};
+		}
+		return this._linearVelocity;
+		},function(value){
+		if (!value)return;
+		if ((value instanceof Array)){
+			value={x:value[0],y:value[1]};
+		}
+		this._linearVelocity=value;
+		if (this._body)this._body.SetLinearVelocity(new window.box2d.b2Vec2(value.x,value.y));
+	});
+
+	/**是否高速移动的物体，设置为true，可以防止高速穿透*/
+	__getset(0,__proto,'bullet',function(){
+		return this._bullet;
+		},function(value){
+		this._bullet=value;
+		if (this._body)this._body.SetBullet(value);
+	});
+
+	return RigidBody;
+})(Component)
+
+
+/**
 *<code>Transform3D</code> 类用于实现3D变换。
 */
 //class laya.d3.core.Transform3D extends laya.events.EventDispatcher
@@ -43543,396 +43935,6 @@ var Transform3D=(function(_super){
 	]);
 	return Transform3D;
 })(EventDispatcher)
-
-
-/**
-*2D刚体，显示对象通过RigidBody和物理世界进行绑定，保持物理和显示对象之间的位置同步
-*物理世界的位置变化会自动同步到显示对象，显示对象本身的位移，旋转（父对象位移无效）也会自动同步到物理世界
-*由于引擎限制，暂时不支持以下情形：
-*1.不支持绑定节点缩放
-*2.不支持绑定节点的父节点缩放和旋转
-*3.不支持实时控制父对象位移，IDE内父对象位移是可以的
-*如果想整体位移物理世界，可以Physics.I.worldRoot=场景，然后移动场景即可
-*可以通过IDE-"项目设置" 开启物理辅助线显示，或者通过代码PhysicsDebugDraw.enable();
-*/
-//class laya.physics.RigidBody extends laya.components.Component
-var RigidBody=(function(_super){
-	function RigidBody(){
-		/**
-		*刚体类型，支持三种类型static，dynamic和kinematic类型，默认为dynamic类型
-		*static为静态类型，静止不动，不受重力影响，质量无限大，可以通过节点移动，旋转，缩放进行控制
-		*dynamic为动态类型，受重力影响
-		*kinematic为运动类型，不受重力影响，可以通过施加速度或者力的方式使其运动
-		*/
-		this._type="dynamic";
-		/**是否允许休眠，允许休眠能提高性能*/
-		this._allowSleep=true;
-		/**角速度，设置会导致旋转*/
-		this._angularVelocity=0;
-		/**旋转速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
-		this._angularDamping=0;
-		/**线性运动速度，比如{x:10,y:10}*/
-		this._linearVelocity={x:0,y:0};
-		/**线性速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
-		this._linearDamping=0;
-		/**是否高速移动的物体，设置为true，可以防止高速穿透*/
-		this._bullet=false;
-		/**是否允许旋转，如果不希望刚体旋转，这设置为false*/
-		this._allowRotation=true;
-		/**重力缩放系数，设置为0为没有重力*/
-		this._gravityScale=1;
-		/**[只读] 指定了该主体所属的碰撞组，默认为0，碰撞规则如下：
-		*1.如果两个对象group相等
-		*group值大于零，它们将始终发生碰撞
-		*group值小于零，它们将永远不会发生碰撞
-		*group值等于0，则使用规则3
-		*2.如果group值不相等，则使用规则3
-		*3.每个刚体都有一个category类别，此属性接收位字段，范围为[1,2^31]范围内的2的幂
-		*每个刚体也都有一个mask类别，指定与其碰撞的类别值之和（值是所有category按位AND的值）
-		*/
-		this.group=0;
-		/**[只读]碰撞类别，使用2的幂次方值指定，有32种不同的碰撞类别可用*/
-		this.category=1;
-		/**[只读]指定冲突位掩码碰撞的类别，category位操作的结果*/
-		this.mask=-1;
-		/**[只读]自定义标签*/
-		this.label="RigidBody";
-		/**[只读]原始刚体*/
-		this._body=null;
-		RigidBody.__super.call(this);
-	}
-
-	__class(RigidBody,'laya.physics.RigidBody',_super);
-	var __proto=RigidBody.prototype;
-	__proto._createBody=function(){
-		if (this._body)return;
-		var sp=this.owner;
-		var box2d=window.box2d;
-		var def=new box2d.b2BodyDef();
-		var point=(this.owner).localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
-		def.position.Set(point.x / Physics.PIXEL_RATIO,point.y / Physics.PIXEL_RATIO);
-		def.angle=Utils.toRadian(sp.rotation);
-		def.allowSleep=this._allowSleep;
-		def.angularDamping=this._angularDamping;
-		def.angularVelocity=this._angularVelocity;
-		def.bullet=this._bullet;
-		def.fixedRotation=!this._allowRotation;
-		def.gravityScale=this._gravityScale;
-		def.linearDamping=this._linearDamping;
-		var obj=this._linearVelocity;
-		if (obj && obj.x !=0 || obj.y !=0){
-			def.linearVelocity=new box2d.b2Vec2(obj.x,obj.y);
-		}
-		def.type=box2d.b2BodyType["b2_"+this._type+"Body"];
-		this._body=Physics.I._createBody(def);
-		this.resetCollider(false);
-	}
-
-	__proto._onAwake=function(){
-		this._createBody();
-	}
-
-	__proto._onEnable=function(){
-		var _$this=this;
-		this._createBody();
-		Laya.physicsTimer.frameLoop(1,this,this._sysPhysicToNode);
-		var sp=this.owner;
-		if (sp._$set_x && !sp._changeByRigidBody){
-			sp._changeByRigidBody=true;
-			function setX (value){
-				sp._$set_x(value);
-				_$this._sysPosToPhysic();
-			}
-			this._overSet(sp,"x",setX);
-			function setY (value){
-				sp._$set_y(value);
-				_$this._sysPosToPhysic();
-			};
-			this._overSet(sp,"y",setY);
-			function setRotation (value){
-				sp._$set_rotation(value);
-				_$this._sysNodeToPhysic();
-			};
-			this._overSet(sp,"rotation",setRotation);
-			function setScaleX (value){
-				sp._$set_scaleX(value);
-				_$this.resetCollider(true);
-			};
-			this._overSet(sp,"scaleX",setScaleX);
-			function setScaleY (value){
-				sp._$set_scaleY(value);
-				_$this.resetCollider(true);
-			};
-			this._overSet(sp,"scaleY",setScaleY);
-		}
-	}
-
-	/**
-	*重置Collider
-	*@param resetShape 是否先重置形状，比如缩放导致碰撞体变化
-	*/
-	__proto.resetCollider=function(resetShape){
-		var comps=this.owner.getComponents(ColliderBase);
-		if (comps){
-			for (var i=0,n=comps.length;i < n;i++){
-				var collider=comps[i];
-				collider.rigidBody=this;
-				if (resetShape)collider.resetShape();
-				else collider.refresh();
-			}
-		}
-	}
-
-	/**@private 同步物理坐标到游戏坐标*/
-	__proto._sysPhysicToNode=function(){
-		if (this.type !="static" && this._body.IsAwake()){
-			var pos=this._body.GetPosition();
-			var ang=this._body.GetAngle();
-			var sp=this.owner;
-			sp._$set_rotation(Utils.toAngle(ang)-(sp.parent).globalRotation);
-			if (ang==0){
-				var point=sp.parent.globalToLocal(Point.TEMP.setTo(pos.x *Physics.PIXEL_RATIO+sp.pivotX,pos.y *Physics.PIXEL_RATIO+sp.pivotY),false,Physics.I.worldRoot);
-				sp._$set_x(point.x);
-				sp._$set_y(point.y);
-				}else {
-				point=sp.globalToLocal(Point.TEMP.setTo(pos.x *Physics.PIXEL_RATIO,pos.y *Physics.PIXEL_RATIO),false,Physics.I.worldRoot);
-				point.x+=sp.pivotX;
-				point.y+=sp.pivotY;
-				point=sp.toParentPoint(point);
-				sp._$set_x(point.x);
-				sp._$set_y(point.y);
-			}
-		}
-	}
-
-	/**@private 同步节点坐标及旋转到物理世界*/
-	__proto._sysNodeToPhysic=function(){
-		var sp=(this.owner);
-		this._body.SetAngle(Utils.toRadian(sp.rotation));
-		var p=sp.localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
-		this._body.SetPositionXY(p.x / Physics.PIXEL_RATIO,p.y / Physics.PIXEL_RATIO);
-	}
-
-	/**@private 同步节点坐标到物理世界*/
-	__proto._sysPosToPhysic=function(){
-		var sp=(this.owner);
-		var p=sp.localToGlobal(Point.TEMP.setTo(0,0),false,Physics.I.worldRoot);
-		this._body.SetPositionXY(p.x / Physics.PIXEL_RATIO,p.y / Physics.PIXEL_RATIO);
-	}
-
-	/**@private */
-	__proto._overSet=function(sp,prop,getfun){
-		Object.defineProperty(sp,prop,{get:sp["_$get_"+prop],set:getfun,enumerable:false,configurable:true});;
-	}
-
-	__proto._onDisable=function(){
-		Laya.physicsTimer.clear(this,this._sysPhysicToNode);
-		Physics.I._removeBody(this._body);
-		this._body=null;
-		var owner=this.owner;
-		if (owner._changeByRigidBody){
-			this._overSet(owner,"x",owner._$set_x);
-			this._overSet(owner,"y",owner._$set_y);
-			this._overSet(owner,"rotation",owner._$set_rotation);
-			this._overSet(owner,"scaleX",owner._$set_scaleX);
-			this._overSet(owner,"scaleY",owner._$set_scaleY);
-			owner._changeByRigidBody=false;
-		}
-	}
-
-	/**获得原始body对象 */
-	__proto.getBody=function(){
-		if (!this._body)this._onAwake();
-		return this._body;
-	}
-
-	/**
-	*对刚体施加力
-	*@param position 施加力的点，如{x:100,y:100}，全局坐标
-	*@param force 施加的力，如{x:0.1,y:0.1}
-	*/
-	__proto.applyForce=function(position,force){
-		if (!this._body)this._onAwake();
-		this._body.ApplyForce(force,position);
-	}
-
-	/**
-	*从中心点对刚体施加力，防止对象旋转
-	*@param force 施加的力，如{x:0.1,y:0.1}
-	*/
-	__proto.applyForceToCenter=function(force){
-		if (!this._body)this._onAwake();
-		this._body.ApplyForceToCenter(force);
-	}
-
-	/**
-	*施加速度冲量，添加的速度冲量会与刚体原有的速度叠加，产生新的速度
-	*@param position 施加力的点，如{x:100,y:100}，全局坐标
-	*@param impulse 施加的速度冲量，如{x:0.1,y:0.1}
-	*/
-	__proto.applyLinearImpulse=function(position,impulse){
-		if (!this._body)this._onAwake();
-		this._body.ApplyLinearImpulse(impulse,position);
-	}
-
-	/**
-	*施加速度冲量，添加的速度冲量会与刚体原有的速度叠加，产生新的速度
-	*@param impulse 施加的速度冲量，如{x:0.1,y:0.1}
-	*/
-	__proto.applyLinearImpulseToCenter=function(impulse){
-		if (!this._body)this._onAwake();
-		this._body.ApplyLinearImpulseToCenter(impulse);
-	}
-
-	/**
-	*对刚体施加扭矩，使其旋转
-	*@param torque 施加的扭矩
-	*/
-	__proto.applyTorque=function(torque){
-		if (!this._body)this._onAwake();
-		this._body.ApplyTorque(torque);
-	}
-
-	/**
-	*设置速度，比如{x:10,y:10}
-	*@param velocity
-	*/
-	__proto.setVelocity=function(velocity){
-		if (!this._body)this._onAwake();
-		this._body.SetLinearVelocity(velocity);
-	}
-
-	/**
-	*设置角度
-	*@param value 单位为弧度
-	*/
-	__proto.setAngle=function(value){
-		if (!this._body)this._onAwake();
-		this._body.SetAngle(value);
-		this._body.SetAwake(true);
-	}
-
-	/**获得刚体质量*/
-	__proto.getMass=function(){
-		return this._body ? this._body.GetMass():0;
-	}
-
-	/**
-	*获得质心的相对节点0,0点的位置偏移
-	*/
-	__proto.getCenter=function(){
-		if (!this._body)this._onAwake();
-		var p=this._body.GetLocalCenter();
-		p.x=p.x *Physics.PIXEL_RATIO;
-		p.y=p.y *Physics.PIXEL_RATIO;
-		return p;
-	}
-
-	/**
-	*获得质心的世界坐标，相对于Physics.I.worldRoot节点
-	*/
-	__proto.getWorldCenter=function(){
-		if (!this._body)this._onAwake();
-		var p=this._body.GetWorldCenter();
-		p.x=p.x *Physics.PIXEL_RATIO;
-		p.y=p.y *Physics.PIXEL_RATIO;
-		return p;
-	}
-
-	/**[只读]获得原始body对象 */
-	__getset(0,__proto,'body',function(){
-		if (!this._body)this._onAwake();
-		return this._body;
-	});
-
-	/**是否允许休眠，允许休眠能提高性能*/
-	__getset(0,__proto,'allowSleep',function(){
-		return this._allowSleep;
-		},function(value){
-		this._allowSleep=value;
-		if (this._body)this._body.SetSleepingAllowed(value);
-	});
-
-	/**
-	*刚体类型，支持三种类型static，dynamic和kinematic类型
-	*static为静态类型，静止不动，不受重力影响，质量无限大，可以通过节点移动，旋转，缩放进行控制
-	*dynamic为动态类型，接受重力影响
-	*kinematic为运动类型，不受重力影响，可以通过施加速度或者力的方式使其运动
-	*/
-	__getset(0,__proto,'type',function(){
-		return this._type;
-		},function(value){
-		this._type=value;
-		if (this._body)this._body.SetType(window.box2d.b2BodyType["b2_"+this._type+"Body"]);
-	});
-
-	/**旋转速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
-	__getset(0,__proto,'angularDamping',function(){
-		return this._angularDamping;
-		},function(value){
-		this._angularDamping=value;
-		if (this._body)this._body.SetAngularDamping(value);
-	});
-
-	/**重力缩放系数，设置为0为没有重力*/
-	__getset(0,__proto,'gravityScale',function(){
-		return this._gravityScale;
-		},function(value){
-		this._gravityScale=value;
-		if (this._body)this._body.SetGravityScale(value);
-	});
-
-	/**是否允许旋转，如果不希望刚体旋转，这设置为false*/
-	__getset(0,__proto,'allowRotation',function(){
-		return this._allowRotation;
-		},function(value){
-		this._allowRotation=value;
-		if (this._body)this._body.SetFixedRotation(!value);
-	});
-
-	/**线性速度阻尼系数，范围可以在0到无穷大之间，0表示没有阻尼，无穷大表示满阻尼，通常阻尼的值应该在0到0.1之间*/
-	__getset(0,__proto,'linearDamping',function(){
-		return this._linearDamping;
-		},function(value){
-		this._linearDamping=value;
-		if (this._body)this._body.SetLinearDamping(value);
-	});
-
-	/**角速度，设置会导致旋转*/
-	__getset(0,__proto,'angularVelocity',function(){
-		if (this._body)return this._body.GetAngularVelocity();
-		return this._angularVelocity;
-		},function(value){
-		this._angularVelocity=value;
-		if (this._body)this._body.SetAngularVelocity(value);
-	});
-
-	/**线性运动速度，比如{x:5,y:5}*/
-	__getset(0,__proto,'linearVelocity',function(){
-		if (this._body){
-			var vec=this._body.GetLinearVelocity();
-			return {x:vec.x,y:vec.y};
-		}
-		return this._linearVelocity;
-		},function(value){
-		if (!value)return;
-		if ((value instanceof Array)){
-			value={x:value[0],y:value[1]};
-		}
-		this._linearVelocity=value;
-		if (this._body)this._body.SetLinearVelocity(new window.box2d.b2Vec2(value.x,value.y));
-	});
-
-	/**是否高速移动的物体，设置为true，可以防止高速穿透*/
-	__getset(0,__proto,'bullet',function(){
-		return this._bullet;
-		},function(value){
-		this._bullet=value;
-		if (this._body)this._body.SetBullet(value);
-	});
-
-	return RigidBody;
-})(Component)
 
 
 /**
@@ -56719,21 +56721,6 @@ var MeshRenderStaticBatchManager=(function(_super){
 
 
 /**
-*...
-*@author ...
-*/
-//class laya.webgl.BufferState2D extends laya.webgl.BufferStateBase
-var BufferState2D=(function(_super){
-	function BufferState2D(){
-		BufferState2D.__super.call(this);
-	}
-
-	__class(BufferState2D,'laya.webgl.BufferState2D',_super);
-	return BufferState2D;
-})(BufferStateBase)
-
-
-/**
 *<code>BoxColliderShape</code> 类用于创建盒子形状碰撞器。
 */
 //class laya.d3.physics.shape.BoxColliderShape extends laya.d3.physics.shape.ColliderShape
@@ -56794,6 +56781,21 @@ var BoxColliderShape=(function(_super){
 	]);
 	return BoxColliderShape;
 })(ColliderShape)
+
+
+/**
+*...
+*@author ...
+*/
+//class laya.webgl.BufferState2D extends laya.webgl.BufferStateBase
+var BufferState2D=(function(_super){
+	function BufferState2D(){
+		BufferState2D.__super.call(this);
+	}
+
+	__class(BufferState2D,'laya.webgl.BufferState2D',_super);
+	return BufferState2D;
+})(BufferStateBase)
 
 
 /**
@@ -78953,7 +78955,22 @@ var drawcard=(function(_super){
 
 	__proto.onSummonClick=function(e){
 		Browser.window.login();
-		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","1.0000 EOS","STARDUSTBU0$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+		switch(drawcard.m_Card_Type){
+			case "S":
+				Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","1.0000 EOS","STARDUSTBU0$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+				break ;
+			case "E":
+				Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","1.0000 EOS","STARDUSTBU1$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+				break ;
+			case "All":
+				Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","1.0000 EOS","STARDUSTBU2$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+				break ;
+			case "Dust":
+				Browser.window.action_transfer_callback("gameofcrown2",Browser.window.GLOBAL_DATA.username,"gameofcrown1","10.0000 DUST","STARDUSTBU2$00000",function(){Browser.window.GLOBAL_CLASS_DRAW_CARD.Refresh();});
+				break ;
+			default :
+				break ;
+			}
 	}
 
 	//Summon();
@@ -79017,12 +79034,15 @@ var drawcard=(function(_super){
 
 	__proto.onEnable=function(){
 		Browser.window.GLOBAL_CLASS_DRAW_CARD=this;
+		drawcard.m_Card_Type=Browser.window.m_CardType;
+		/*no*/this.m_Card_Type_Label.text=drawcard.m_Card_Type;
 		/*no*/this.m_Summon_Button.on("click",this,this.onSummonClick);
 		/*no*/this.m_Card_List_Button.on("click",this,this.To_Card_List);
 		/*no*/this.m_Refresh_Button.on("click",this,this.onRefreshClick);
 	}
 
 	__proto.onDisable=function(){}
+	drawcard.m_Card_Type=null;
 	drawcard.m_Draw_Result=0;
 	return drawcard;
 })(Scene)
@@ -79210,7 +79230,8 @@ var View=(function(_super){
 var tradelist=(function(_super){
 	var Item;
 	function tradelist(){
-		tradelist.__super.call(this);;
+		this.m_Dlg=null;
+		tradelist.__super.call(this);
 	}
 
 	__class(tradelist,'script.tradelist.tradelist',_super);
@@ -79247,8 +79268,9 @@ var tradelist=(function(_super){
 		var so=/*no*/this.m_Trade_List.selectedItem;
 		console.log(so);
 		console.log("当前选择的索引："+index);
-		var dlg=new tradingconfirm();
-		dlg.popup();
+		this.m_Dlg=new tradingconfirm();
+		this.m_Dlg.tradeinfo=/*no*/this.m_Trade_List.selectedItem.dataSource;
+		this.m_Dlg.popup();
 		/*no*/this.m_Trade_List.selectedIndex=-1;
 	}
 
@@ -79496,7 +79518,7 @@ var cardlist=(function(_super){
 	__proto.onImgClick=function(e){
 		var ii=cardlist.m_Inst.m_Imglist.indexOf(this);
 		Browser.window.m_CardID=ii+cardlist.m_PageIndex*cardlist.m_PageCapacity;
-		Scene.open("carddetail/Card_Detail.scene");
+		Scene.open("gamenavi/Game_Navi.scene");
 	}
 
 	__proto.UpdateContainer=function(){
@@ -79547,13 +79569,17 @@ var cardlist=(function(_super){
 		}
 	}
 
-	__proto.onRefreshClick=function(e){
+	__proto.Refresh=function(){
 		/*no*/this.m_HR=new HttpRequest();
 		/*no*/this.m_HR.once("progress",this,this.onHttpRequestProgress);
 		/*no*/this.m_HR.once("complete",this,this.onHttpRequestComplete);
 		/*no*/this.m_HR.once("error",this,this.onHttpRequestError);
 		var postdata="{\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"1\",\"scope\":\""+"gameofcrown1"+"\",\"table\":\"topuserb\","+"\"lower_bound\":\""+Browser.window.GLOBAL_DATA.username+"\""+"}";
 		/*no*/this.m_HR.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onRefreshClick=function(e){
+		this.Refresh();
 	}
 
 	__proto.onHttpRequestError=function(e){
@@ -79694,8 +79720,15 @@ var gamenavi=(function(_super){
 
 	//m_Ani_Card.play(0,true,"dizziness");
 	__proto.UpdateData=function(){
+		if(Browser.window.GLOBAL_JACKPOT_DATA.rows.length==0){
+			return;
+		};
 		var str=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].pool;
+		var divs=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].divpools;
+		var dive=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].divpoole;
 		/*no*/this.m_Jackpot_Text.text="大奖:"+str;
+		/*no*/this.m_Dividend_S_Text.text="天罡分红奖池:"+divs;
+		/*no*/this.m_Dividend_E_Text.text="地煞分红奖池:"+dive;
 	}
 
 	__proto.onLoaded=function(){
@@ -79749,9 +79782,38 @@ var gamenavi=(function(_super){
 		Scene.open("cardlist/Card_List.scene");
 	}
 
+	__proto.To_Draw_S=function(e){
+		Browser.window.m_CardType="S";
+		Scene.open("drawcard/Draw_Card.scene");
+	}
+
+	__proto.To_Draw_E=function(e){
+		Browser.window.m_CardType="E";
+		Scene.open("drawcard/Draw_Card.scene");
+	}
+
+	__proto.To_Draw_All=function(e){
+		Browser.window.m_CardType="All";
+		Scene.open("drawcard/Draw_Card.scene");
+	}
+
+	__proto.To_Draw_Dust=function(e){
+		Browser.window.m_CardType="Dust";
+		Scene.open("drawcard/Draw_Card.scene");
+	}
+
+	__proto.To_User_Info=function(e){
+		Scene.open("userinfo/User_Info.scene");
+	}
+
 	__proto.onEnable=function(){
 		Browser.window.GLOBAL_CLASS_GAME_NAVI=this;
 		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
+		/*no*/this.m_To_Draw_S.on("click",this,this.To_Draw_S);
+		/*no*/this.m_To_Draw_E.on("click",this,this.To_Draw_E);
+		/*no*/this.m_To_Draw_All.on("click",this,this.To_Draw_All);
+		/*no*/this.m_To_Draw_Dust.on("click",this,this.To_Draw_Dust);
+		/*no*/this.m_To_User_Info.on("click",this,this.To_User_Info);
 		this.Refresh();
 	}
 
@@ -79784,6 +79846,118 @@ var gamelogo=(function(_super){
 
 	__proto.onDisable=function(){}
 	return gamelogo;
+})(Scene)
+
+
+//class script.userinfo.userinfo extends laya.display.Scene
+var userinfo=(function(_super){
+	function userinfo(){
+		this.m_HR_EOS=null;
+		this.m_HR_DUST=null;
+		userinfo.__super.call(this);
+	}
+
+	__class(userinfo,'script.userinfo.userinfo',_super);
+	var __proto=userinfo.prototype;
+	__proto.createChildren=function(){
+		_super.prototype.createChildren.call(this);
+		this.loadScene("userinfo/User_Info");
+	}
+
+	__proto.animateTimeBased=function(){
+		var date=new Date();
+		console.log(date.valueOf());
+	}
+
+	__proto.onDividendClick=function(e){
+		Browser.window.login();
+		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTDIV$00000",function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();});
+	}
+
+	__proto.onJackpotClick=function(e){
+		Browser.window.login();
+		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTJKP$00000",function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();});
+	}
+
+	__proto.onBackToNavi=function(e){
+		Scene.open("gamenavi/Game_Navi.scene");
+	}
+
+	__proto.onEnable=function(){
+		/*no*/this.m_To_Game_Navi_Button.on("click",this,this.onBackToNavi);
+		/*no*/this.m_Jackpot_Button.on("click",this,this.onJackpotClick);
+		/*no*/this.m_Dividend_Button.on("click",this,this.onDividendClick);
+		Browser.window.GLOBAL_CLASSUSER_INFO=this;
+		Laya.timer.loop(2000,this,this.animateTimeBased);
+		this.Refresh();
+		this.Refresh_DUST();
+	}
+
+	__proto.onDisable=function(){}
+	////////////////////////////////////////
+	__proto.Refresh=function(){
+		this.m_HR_EOS=new HttpRequest();
+		this.m_HR_EOS.once("progress",this,this.onHttpRequestProgress);
+		this.m_HR_EOS.once("complete",this,this.onHttpRequestComplete);
+		this.m_HR_EOS.once("error",this,this.onHttpRequestError);
+		var postdata="{\"code\":\"eosio.token\",\"account\":\""+Browser.window.GLOBAL_DATA.username+"\",\"symbol\":\""+"EOS"+"\"}";
+		this.m_HR_EOS.send('https://geo.eosasia.one:443/v1/chain/get_currency_balance',postdata,'post','text');
+	}
+
+	__proto.onRefreshClick=function(e){
+		this.Refresh();
+	}
+
+	__proto.onHttpRequestError=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete=function(e){
+		var jo=(JSON.parse(this.m_HR_EOS.data));
+		console.log(jo);
+		if(jo.length!=0){
+			Browser.window.GLOBAL_DATA.user_asset_eos=jo[0];
+			Browser.window.GLOBAL_CLASSUSER_INFO.UpdateData();
+		}
+	}
+
+	/////////////////////////////////////////////////////////////
+	__proto.Refresh_DUST=function(){
+		this.m_HR_DUST=new HttpRequest();
+		this.m_HR_DUST.once("progress",this,this.onHttpRequestProgress_DUST);
+		this.m_HR_DUST.once("complete",this,this.onHttpRequestComplete_DUST);
+		this.m_HR_DUST.once("error",this,this.onHttpRequestError_DUST);
+		var postdata="{\"code\":\"gameofcrown2\",\"account\":\""+Browser.window.GLOBAL_DATA.username+"\",\"symbol\":\""+"TOP"+"\"}";
+		this.m_HR_DUST.send('https://geo.eosasia.one:443/v1/chain/get_currency_balance',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError_DUST=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress_DUST=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete_DUST=function(e){
+		var jo=(JSON.parse(this.m_HR_DUST.data));
+		console.log(jo);
+		if(jo.length!=0){
+			Browser.window.GLOBAL_DATA.user_asset_dust=jo[0];
+			Browser.window.GLOBAL_CLASS_USER_INFO.UpdateData();
+		}
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	__proto.UpdateData=function(){
+		/*no*/this.m_Asset_Label.text=Browser.window.GLOBAL_DATA.user_asset_eos+"\n"+Browser.window.GLOBAL_DATA.user_asset_dust;
+	}
+
+	return userinfo;
 })(Scene)
 
 
@@ -92170,13 +92344,6 @@ var sellcarddialog=(function(_super){
 var tradingconfirm=(function(_super){
 	function tradingconfirm(){
 		/**@prop {name:intType,tips:"整数类型示例",type:Int,default:1000}*/
-		this.intType=1000;
-		/**@prop {name:numType,tips:"数字类型示例",type:Number,default:1000}*/
-		this.numType=1000;
-		/**@prop {name:strType,tips:"字符串类型示例",type:String,default:"hello laya"}*/
-		this.strType="hello laya";
-		/**@prop {name:boolType,tips:"布尔类型示例",type:Bool,default:true}*/
-		this.boolType=true;
 		tradingconfirm.__super.call(this);
 	}
 
@@ -92197,9 +92364,16 @@ var tradingconfirm=(function(_super){
 	}
 
 	__proto.onConfirmClick=function(e){
-		this.close();
+		var money=parseFloat(this.tradeinfo.money);
+		money+=0.2;
+		money=money.toFixed(4)+" EOS";
+		var tid=(this.tradeinfo.id);
+		var cid=(this.tradeinfo.cardid);
+		Browser.window.login();
+		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1",money,"STARDUSTTRD$"+tid.toString()+"$"+cid.toString()+"$00000",function(){Browser.window.GLOBAL_CLASS_TRADE_LIST.Refresh();Browser.window.GLOBAL_CLASS_TRADE_LIST.m_Dlg.close();});
 	}
 
+	//close();
 	__proto.onDisable=function(){}
 	return tradingconfirm;
 })(Dialog)
@@ -92732,7 +92906,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,CharBook,carddetail,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,CallLater,GraphicAnimation,tradelist,Physics,View,Path]);
+	Laya.__init([LoaderManager,EventDispatcher,CharBook,carddetail,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,CallLater,GraphicAnimation,tradelist,Physics,View,Path]);
 	/**LayaGameStart**/
 	new Main();
 
