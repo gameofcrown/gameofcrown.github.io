@@ -79269,7 +79269,7 @@ var tradelist=(function(_super){
 		console.log(so);
 		console.log("当前选择的索引："+index);
 		this.m_Dlg=new tradingconfirm();
-		this.m_Dlg.tradeinfo=/*no*/this.m_Trade_List.selectedItem.dataSource;
+		this.m_Dlg.tradeinfo=/*no*/this.m_Trade_List.selectedItem;
 		this.m_Dlg.popup();
 		/*no*/this.m_Trade_List.selectedIndex=-1;
 	}
@@ -79921,7 +79921,7 @@ var userinfo=(function(_super){
 		console.log(jo);
 		if(jo.length!=0){
 			Browser.window.GLOBAL_DATA.user_asset_eos=jo[0];
-			Browser.window.GLOBAL_CLASSUSER_INFO.UpdateData();
+			Browser.window.GLOBAL_CLASS_USER_INFO.UpdateData();
 		}
 	}
 
