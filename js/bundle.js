@@ -61640,8 +61640,17 @@ var GameUtils=(function(_super){
 		return "resource/108graph/"+(i+1).toString()+".jpg";
 	}
 
+	GameUtils.getCard=function(i){
+		return "resource/108card/"+(i+1).toString()+".jpg";
+	}
+
 	GameUtils.getName=function(i){
 		var namelist=["宋江","卢俊义","吴用","公孙胜","关胜","林冲","秦明","呼延灼","花荣","柴进","李应","朱仝","鲁智深","武松","董平","张清","杨志","徐宁","索超","戴宗","刘唐","李逵","史进","穆弘","雷横","李俊","阮小二","张横","阮小五","张顺","阮小七","杨雄","石秀","解珍","解宝","燕青","朱武","黄信","孙立","宣赞","郝思文","韩滔","彭玘","单廷圭","魏定国","萧让","裴宣","欧鹏","邓飞","燕顺","杨林","凌振","蒋敬","吕方","郭盛","安道全","黄甫端","王英","扈三娘","鲍旭","樊瑞","孔明","孔亮","项充","李衮","金大坚","马麟","童威","童猛","孟康","候健","陈达","杨春","郑天寿","陶宗旺","宋清","乐和","龚旺","丁得孙","穆春","曹正","宋万","杜迁","薛勇","施恩","周通","李忠","杜兴","汤隆","邹润","邹渊","朱富","朱贵","蔡福","蔡庆","李立","李云","焦挺","石勇","孙新","顾大嫂","张青","孙二娘","王定六","郁保四","白胜","时迁","段景住"];
+		return namelist[i];
+	}
+
+	GameUtils.getFlowerName=function(i){
+		var namelist=["呼保义","玉麒麟","智多星","入云龙","大刀","豹子头","霹雳火","双鞭","小李广","小旋风","扑天雕","美髯公","花和尚","行者","双枪将","没羽箭","青面兽","金枪手","急先锋","神行太保","赤发鬼","黑旋风","九纹龙","没遮拦","插翅虎","混江龙","立地太岁","船火儿","短命二郎","浪里白条","活阎罗","病关索","拼命三郎","双头蛇","双尾蝎","浪子","神机军师","镇三山","病尉迟","丑郡马","井木犴","百胜将","天目将","圣水将","神火将","圣手书生","铁面孔目","摩云金翅","火眼狻猊","锦毛虎","锦豹子","轰天雷","神算子","小温候","赛仁贵","神医","紫髯伯","矮脚虎","一丈青","丧门神","混世魔王","毛头星","独火星","八臂哪吒","飞天大圣","玉臂匠","铁笛仙","出洞蛟","翻江蜃","玉蟠杆","通臂猿","跳涧虎","白花蛇","白面郎君","九尾龟","铁扇子","铁叫子","花项虎","中箭虎","小遮拦","操刀鬼","云里金刚","摸着天","病大虫","金眼彪","小霸王","打虎将","鬼脸儿","金钱豹子","独角龙","出林龙","笑面虎","旱地忽律","铁臂膊","一枝花","催命判官","青眼虎","没面目","石将军","小尉迟","母大虫","菜园子","母夜叉","活闪婆","险道神","白日鼠","鼓上蚤","金毛犬"];
 		return namelist[i];
 	}
 
@@ -79886,11 +79895,11 @@ var carddetail=(function(_super){
 		/*no*/this.m_To_Trad_List.on("click",this,this.To_Trad_List);
 		/*no*/this.m_To_Card_List.on("click",this,this.To_Card_List);
 		/*no*/this.m_Sell_Card_Button.on("click",this,this.Sell_Card);
-		/*no*/this.m_Cancel_Trad.on("click",this,this.Sell_Card);
+		/*no*/this.m_Cancel_Trad.on("click",this,this.Cancel_Trade);
 		/*no*/this.m_To_User_Info.on("click",this,this.To_User_Info);
 		/*no*/this.m_Back_Button.on("click",this,this.To_Game_Navi);
-		/*no*/this.m_Card.texture=GameUtils.getGraphic(carddetail.m_CardID);
-		/*no*/this.m_Card_Name_Label.text=GameUtils.getName(carddetail.m_CardID);
+		/*no*/this.m_Card.texture=GameUtils.getCard(carddetail.m_CardID);
+		/*no*/this.m_Card_Name_Label.text=GameUtils.getFlowerName(carddetail.m_CardID)+"•"+GameUtils.getName(carddetail.m_CardID);
 		this.m_Dlg=new sellcarddialog();
 		this.m_Dlg.popup();
 		this.m_Dlg.close();
