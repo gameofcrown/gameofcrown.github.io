@@ -4,6 +4,7 @@ function _GLOBAL_DATA()
     this.username="gigaofcolony";
     this.userinfo=null;
     this.user_asset_eos="";
+    this.welcome=true;
 }
 
 var GLOBAL_DATA= new _GLOBAL_DATA();

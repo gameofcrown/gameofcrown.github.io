@@ -1,5 +1,5 @@
 
-window.action_sell_card = (code, user, cardid,cardnum,asset,func) => {
+window.action_sell_card = (code, user, cardid,cardnum,asset,func,func_error) => {
     const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
     const opts = { authorization: [`${account.name}@${account.authority}`] };
     eos.contract(code, { requiredFields: {} }).then(contract => {
@@ -28,6 +28,12 @@ window.action_transfer = (code, from,to,asset,memo) => {
            
         }).catch(err => {
             console.error(err);
+            window.setTimeout(
+                function(){
+                    func_error();
+                }
+                ,1500
+            );
            
         })
     })
@@ -47,6 +53,31 @@ window.action_transfer_callback = (code, from,to,asset,memo,func) => {
             );
         }).catch(err => {
             console.error(err);
+           
+        })
+    })
+}
+window.action_transfer_callback_error = (code, from,to,asset,memo,func,func_error) => {
+    const account = scatter.identity.accounts.find(x => x.blockchain === 'eos');
+    const opts = { authorization: [`${account.name}@${account.authority}`] };
+    eos.contract(code, { requiredFields: {} }).then(contract => {
+        contract.transfer(account.name,to,asset,memo, opts).then(trx => { //修改此处
+            //console.log('trx', trx);
+            console.log('console', trx.processed.action_traces[0].console);
+            window.setTimeout(
+                function(){
+                    func();
+                }
+                ,1500
+            );
+        }).catch(err => {
+            console.error(err);
+            window.setTimeout(
+                function(){
+                    func_error();
+                }
+                ,1500
+            );
            
         })
     })
