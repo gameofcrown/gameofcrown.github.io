@@ -1244,7 +1244,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="middle";
 	GameConfig.alignH="center";
-	GameConfig.startScene="gamenavi/Game_Navi.scene";
+	GameConfig.startScene="gamelogo/Game_Logo.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -79818,7 +79818,6 @@ var gamenavi=(function(_super){
 		/*no*/this.m_To_Draw_S.on("click",this,this.To_Draw_S);
 		/*no*/this.m_To_Draw_E.on("click",this,this.To_Draw_E);
 		/*no*/this.m_To_Draw_All.on("click",this,this.To_Draw_All);
-		/*no*/this.m_To_Draw_Dust.on("click",this,this.To_Draw_Dust);
 		/*no*/this.m_To_User_Info.on("click",this,this.To_User_Info);
 		this.Refresh();
 	}
