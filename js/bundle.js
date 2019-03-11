@@ -61585,47 +61585,6 @@ var GameControl=(function(_super){
 })(Script)
 
 
-//class script.carddetail.canceltradedialog extends laya.components.Script
-var canceltradedialog=(function(_super){
-	function canceltradedialog(){
-		canceltradedialog.__super.call(this);;
-	}
-
-	__class(canceltradedialog,'script.carddetail.canceltradedialog',_super);
-	var __proto=canceltradedialog.prototype;
-	__proto.createChildren=function(){
-		_super.prototype.createChildren();
-		/*no*/this.loadScene("carddetail/Cancel_Trade");
-	}
-
-	__proto.onCancelClick=function(e){
-		/*no*/this.close();
-	}
-
-	__proto.onConfirmClick=function(e){
-		/*no*/this.Browser.window.login();
-		/*no*/this.Browser.window.action_transfer_callback("eosio.token",/*no*/this.Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTCTR$"+/*no*/this.Browser.window.m_CardID+"$00000",
-		function(){
-			/*no*/this.Browser.window.GLOBAL_CLASS_CARD_DETAIL.Cancel_Trade_Callback();
-			/*no*/this.Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();
-		},
-		function(){
-			/*no*/this.Browser.window.GLOBAL_CLASS_CARD_DETAIL.Cancel_Trade_Error_Callback();
-			/*no*/this.Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();
-		});
-	}
-
-	//close();
-	__proto.onEnable=function(){
-		/*no*/this.m_Cancel.on(/*no*/this.Event.CLICK,this,this.onCancelClick);
-		/*no*/this.m_Confirm.on(/*no*/this.Event.CLICK,this,this.onConfirmClick);
-	}
-
-	__proto.onDisable=function(){}
-	return canceltradedialog;
-})(Script)
-
-
 //class script.gameutils.GameUtils extends laya.components.Script
 var GameUtils=(function(_super){
 	function GameUtils(){
@@ -79906,6 +79865,9 @@ var carddetail=(function(_super){
 		this.m_DlgCallback=new Info_Dlg();
 		this.m_DlgCallback.popup();
 		this.m_DlgCallback.close();
+		this.m_Dlg_CT=new canceltradedialog();
+		this.m_Dlg_CT.popup();
+		this.m_Dlg_CT.close();
 	}
 
 	__proto.onDisable=function(){}
@@ -83066,387 +83028,6 @@ var Button=(function(_super){
 
 
 /**
-*<p> <code>Label</code> 类用于创建显示对象以显示文本。</p>
-*
-*@example <caption>以下示例代码，创建了一个 <code>Label</code> 实例。</caption>
-*package
-*{
-	*import laya.ui.Label;
-	*public class Label_Example
-	*{
-		*public function Label_Example()
-		*{
-			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
-			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-			*onInit();
-			*}
-		*private function onInit():void
-		*{
-			*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
-			*label.font="Arial";//设置 label 的字体。
-			*label.bold=true;//设置 label 显示为粗体。
-			*label.leading=4;//设置 label 的行间距。
-			*label.wordWrap=true;//设置 label 自动换行。
-			*label.padding="10,10,10,10";//设置 label 的边距。
-			*label.color="#ff00ff";//设置 label 的颜色。
-			*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-			*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-			*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-			*label.width=300;//设置 label 的宽度。
-			*label.height=200;//设置 label 的高度。
-			*Laya.stage.addChild(label);//将 label 添加到显示列表。
-			*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-			*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-			*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-			*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-			*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-			*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-			*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-			*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-			*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-			*}
-		*}
-	*}
-*@example
-*Laya.init(640,800);//设置游戏画布宽高
-*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
-*onInit();
-*function onInit(){
-	*var label=new laya.ui.Label();//创建一个 Label 类的实例对象 label 。
-	*label.font="Arial";//设置 label 的字体。
-	*label.bold=true;//设置 label 显示为粗体。
-	*label.leading=4;//设置 label 的行间距。
-	*label.wordWrap=true;//设置 label 自动换行。
-	*label.padding="10,10,10,10";//设置 label 的边距。
-	*label.color="#ff00ff";//设置 label 的颜色。
-	*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-	*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-	*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-	*label.width=300;//设置 label 的宽度。
-	*label.height=200;//设置 label 的高度。
-	*Laya.stage.addChild(label);//将 label 添加到显示列表。
-	*var passwordLabel=new laya.ui.Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-	*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-	*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-	*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-	*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-	*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-	*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-	*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-	*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-	*}
-*@example
-*import Label=laya.ui.Label;
-*class Label_Example {
-	*constructor(){
-		*Laya.init(640,800);//设置游戏画布宽高。
-		*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
-		*this.onInit();
-		*}
-	*private onInit():void {
-		*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
-		*label.font="Arial";//设置 label 的字体。
-		*label.bold=true;//设置 label 显示为粗体。
-		*label.leading=4;//设置 label 的行间距。
-		*label.wordWrap=true;//设置 label 自动换行。
-		*label.padding="10,10,10,10";//设置 label 的边距。
-		*label.color="#ff00ff";//设置 label 的颜色。
-		*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
-		*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
-		*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
-		*label.width=300;//设置 label 的宽度。
-		*label.height=200;//设置 label 的高度。
-		*Laya.stage.addChild(label);//将 label 添加到显示列表。
-		*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
-		*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
-		*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
-		*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
-		*passwordLabel.width=300;//设置 passwordLabel 的宽度。
-		*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
-		*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
-		*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
-		*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
-		*}
-	*}
-*@see laya.display.Text
-*/
-//class laya.ui.Label extends laya.ui.UIComponent
-var Label=(function(_super){
-	function Label(text){
-		/**
-		*@private
-		*文本 <code>Text</code> 实例。
-		*/
-		this._tf=null;
-		Label.__super.call(this);
-		(text===void 0)&& (text="");
-		this.text=text;
-	}
-
-	__class(Label,'laya.ui.Label',_super);
-	var __proto=Label.prototype;
-	/**@inheritDoc */
-	__proto.destroy=function(destroyChild){
-		(destroyChild===void 0)&& (destroyChild=true);
-		_super.prototype.destroy.call(this,destroyChild);
-		this._tf=null;
-	}
-
-	/**@inheritDoc */
-	__proto.createChildren=function(){
-		this.addChild(this._tf=new Text());
-	}
-
-	/**@copy laya.display.Text#changeText()
-	**/
-	__proto.changeText=function(text){
-		this._tf.changeText(text);
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto.measureWidth=function(){
-		return this._tf.width;
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto.measureHeight=function(){
-		return this._tf.height;
-	}
-
-	/**
-	*<p>边距信息</p>
-	*<p>"上边距，右边距，下边距 , 左边距（边距以像素为单位）"</p>
-	*@see laya.display.Text.padding
-	*/
-	__getset(0,__proto,'padding',function(){
-		return this._tf.padding.join(",");
-		},function(value){
-		this._tf.padding=UIUtils.fillArray(Styles.labelPadding,value,Number);
-	});
-
-	/**
-	*@copy laya.display.Text#bold
-	*/
-	__getset(0,__proto,'bold',function(){
-		return this._tf.bold;
-		},function(value){
-		this._tf.bold=value;
-	});
-
-	/**
-	*@copy laya.display.Text#align
-	*/
-	__getset(0,__proto,'align',function(){
-		return this._tf.align;
-		},function(value){
-		this._tf.align=value;
-	});
-
-	/**
-	*当前文本内容字符串。
-	*@see laya.display.Text.text
-	*/
-	__getset(0,__proto,'text',function(){
-		return this._tf.text;
-		},function(value){
-		if (this._tf.text !=value){
-			if(value)
-				value=UIUtils.adptString(value+"");
-			this._tf.text=value;
-			this.event("change");
-			if (!this._width || !this._height)this.onCompResize();
-		}
-	});
-
-	/**
-	*@copy laya.display.Text#italic
-	*/
-	__getset(0,__proto,'italic',function(){
-		return this._tf.italic;
-		},function(value){
-		this._tf.italic=value;
-	});
-
-	/**
-	*@copy laya.display.Text#wordWrap
-	*/
-	/**
-	*@copy laya.display.Text#wordWrap
-	*/
-	__getset(0,__proto,'wordWrap',function(){
-		return this._tf.wordWrap;
-		},function(value){
-		this._tf.wordWrap=value;
-	});
-
-	/**
-	*@copy laya.display.Text#font
-	*/
-	__getset(0,__proto,'font',function(){
-		return this._tf.font;
-		},function(value){
-		this._tf.font=value;
-	});
-
-	/**@inheritDoc */
-	__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
-		this._dataSource=value;
-		if ((typeof value=='number')|| (typeof value=='string'))this.text=value+"";
-		else Laya.superSet(UIComponent,this,'dataSource',value);
-	});
-
-	/**
-	*@copy laya.display.Text#color
-	*/
-	__getset(0,__proto,'color',function(){
-		return this._tf.color;
-		},function(value){
-		this._tf.color=value;
-	});
-
-	/**
-	*@copy laya.display.Text#valign
-	*/
-	__getset(0,__proto,'valign',function(){
-		return this._tf.valign;
-		},function(value){
-		this._tf.valign=value;
-	});
-
-	/**
-	*@copy laya.display.Text#leading
-	*/
-	__getset(0,__proto,'leading',function(){
-		return this._tf.leading;
-		},function(value){
-		this._tf.leading=value;
-	});
-
-	/**
-	*@copy laya.display.Text#fontSize
-	*/
-	__getset(0,__proto,'fontSize',function(){
-		return this._tf.fontSize;
-		},function(value){
-		this._tf.fontSize=value;
-	});
-
-	/**
-	*@copy laya.display.Text#bgColor
-	*/
-	__getset(0,__proto,'bgColor',function(){
-		return this._tf.bgColor
-		},function(value){
-		this._tf.bgColor=value;
-	});
-
-	/**
-	*@copy laya.display.Text#borderColor
-	*/
-	__getset(0,__proto,'borderColor',function(){
-		return this._tf.borderColor
-		},function(value){
-		this._tf.borderColor=value;
-	});
-
-	/**
-	*@copy laya.display.Text#stroke
-	*/
-	__getset(0,__proto,'stroke',function(){
-		return this._tf.stroke;
-		},function(value){
-		this._tf.stroke=value;
-	});
-
-	/**
-	*@copy laya.display.Text#strokeColor
-	*/
-	__getset(0,__proto,'strokeColor',function(){
-		return this._tf.strokeColor;
-		},function(value){
-		this._tf.strokeColor=value;
-	});
-
-	/**
-	*文本控件实体 <code>Text</code> 实例。
-	*/
-	__getset(0,__proto,'textField',function(){
-		return this._tf;
-	});
-
-	/**
-	*@inheritDoc
-	*/
-	/**
-	*@inheritDoc
-	*/
-	__getset(0,__proto,'width',function(){
-		if (this._width || this._tf.text)return Laya.superGet(UIComponent,this,'width');
-		return 0;
-		},function(value){
-		Laya.superSet(UIComponent,this,'width',value);
-		this._tf.width=value;
-	});
-
-	/**
-	*@inheritDoc
-	*/
-	/**
-	*@inheritDoc
-	*/
-	__getset(0,__proto,'height',function(){
-		if (this._height || this._tf.text)return Laya.superGet(UIComponent,this,'height');
-		return 0;
-		},function(value){
-		Laya.superSet(UIComponent,this,'height',value);
-		this._tf.height=value;
-	});
-
-	/**
-	*@copy laya.display.Text#overflow
-	*/
-	/**
-	*@copy laya.display.Text#overflow
-	*/
-	__getset(0,__proto,'overflow',function(){
-		return this._tf.overflow;
-		},function(value){
-		this._tf.overflow=value;
-	});
-
-	/**
-	*@copy laya.display.Text#underline
-	*/
-	/**
-	*@copy laya.display.Text#underline
-	*/
-	__getset(0,__proto,'underline',function(){
-		return this._tf.underline;
-		},function(value){
-		this._tf.underline=value;
-	});
-
-	/**
-	*@copy laya.display.Text#underlineColor
-	*/
-	/**
-	*@copy laya.display.Text#underlineColor
-	*/
-	__getset(0,__proto,'underlineColor',function(){
-		return this._tf.underlineColor;
-		},function(value){
-		this._tf.underlineColor=value;
-	});
-
-	return Label;
-})(UIComponent)
-
-
-/**
 *<p><code>Input</code> 类用于创建显示对象以显示和输入文本。</p>
 *<p>Input 类封装了原生的文本输入框，由于不同浏览器的差异，会导致此对象的默认文本的位置与用户点击输入时的文本的位置有少许的偏差。</p>
 */
@@ -83900,6 +83481,387 @@ var Input=(function(_super){
 	]);
 	return Input;
 })(Text)
+
+
+/**
+*<p> <code>Label</code> 类用于创建显示对象以显示文本。</p>
+*
+*@example <caption>以下示例代码，创建了一个 <code>Label</code> 实例。</caption>
+*package
+*{
+	*import laya.ui.Label;
+	*public class Label_Example
+	*{
+		*public function Label_Example()
+		*{
+			*Laya.init(640,800);//设置游戏画布宽高、渲染模式。
+			*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
+			*onInit();
+			*}
+		*private function onInit():void
+		*{
+			*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
+			*label.font="Arial";//设置 label 的字体。
+			*label.bold=true;//设置 label 显示为粗体。
+			*label.leading=4;//设置 label 的行间距。
+			*label.wordWrap=true;//设置 label 自动换行。
+			*label.padding="10,10,10,10";//设置 label 的边距。
+			*label.color="#ff00ff";//设置 label 的颜色。
+			*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
+			*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
+			*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
+			*label.width=300;//设置 label 的宽度。
+			*label.height=200;//设置 label 的高度。
+			*Laya.stage.addChild(label);//将 label 添加到显示列表。
+			*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
+			*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
+			*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
+			*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
+			*passwordLabel.width=300;//设置 passwordLabel 的宽度。
+			*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
+			*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
+			*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
+			*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
+			*}
+		*}
+	*}
+*@example
+*Laya.init(640,800);//设置游戏画布宽高
+*Laya.stage.bgColor="#efefef";//设置画布的背景颜色
+*onInit();
+*function onInit(){
+	*var label=new laya.ui.Label();//创建一个 Label 类的实例对象 label 。
+	*label.font="Arial";//设置 label 的字体。
+	*label.bold=true;//设置 label 显示为粗体。
+	*label.leading=4;//设置 label 的行间距。
+	*label.wordWrap=true;//设置 label 自动换行。
+	*label.padding="10,10,10,10";//设置 label 的边距。
+	*label.color="#ff00ff";//设置 label 的颜色。
+	*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
+	*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
+	*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
+	*label.width=300;//设置 label 的宽度。
+	*label.height=200;//设置 label 的高度。
+	*Laya.stage.addChild(label);//将 label 添加到显示列表。
+	*var passwordLabel=new laya.ui.Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
+	*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
+	*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
+	*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
+	*passwordLabel.width=300;//设置 passwordLabel 的宽度。
+	*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
+	*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
+	*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
+	*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
+	*}
+*@example
+*import Label=laya.ui.Label;
+*class Label_Example {
+	*constructor(){
+		*Laya.init(640,800);//设置游戏画布宽高。
+		*Laya.stage.bgColor="#efefef";//设置画布的背景颜色。
+		*this.onInit();
+		*}
+	*private onInit():void {
+		*var label:Label=new Label();//创建一个 Label 类的实例对象 label 。
+		*label.font="Arial";//设置 label 的字体。
+		*label.bold=true;//设置 label 显示为粗体。
+		*label.leading=4;//设置 label 的行间距。
+		*label.wordWrap=true;//设置 label 自动换行。
+		*label.padding="10,10,10,10";//设置 label 的边距。
+		*label.color="#ff00ff";//设置 label 的颜色。
+		*label.text="Hello everyone,我是一个可爱的文本！";//设置 label 的文本内容。
+		*label.x=100;//设置 label 对象的属性 x 的值，用于控制 label 对象的显示位置。
+		*label.y=100;//设置 label 对象的属性 y 的值，用于控制 label 对象的显示位置。
+		*label.width=300;//设置 label 的宽度。
+		*label.height=200;//设置 label 的高度。
+		*Laya.stage.addChild(label);//将 label 添加到显示列表。
+		*var passwordLabel:Label=new Label("请原谅我，我不想被人看到我心里话。");//创建一个 Label 类的实例对象 passwordLabel 。
+		*passwordLabel.asPassword=true;//设置 passwordLabel 的显示反式为密码显示。
+		*passwordLabel.x=100;//设置 passwordLabel 对象的属性 x 的值，用于控制 passwordLabel 对象的显示位置。
+		*passwordLabel.y=350;//设置 passwordLabel 对象的属性 y 的值，用于控制 passwordLabel 对象的显示位置。
+		*passwordLabel.width=300;//设置 passwordLabel 的宽度。
+		*passwordLabel.color="#000000";//设置 passwordLabel 的文本颜色。
+		*passwordLabel.bgColor="#ccffff";//设置 passwordLabel 的背景颜色。
+		*passwordLabel.fontSize=20;//设置 passwordLabel 的文本字体大小。
+		*Laya.stage.addChild(passwordLabel);//将 passwordLabel 添加到显示列表。
+		*}
+	*}
+*@see laya.display.Text
+*/
+//class laya.ui.Label extends laya.ui.UIComponent
+var Label=(function(_super){
+	function Label(text){
+		/**
+		*@private
+		*文本 <code>Text</code> 实例。
+		*/
+		this._tf=null;
+		Label.__super.call(this);
+		(text===void 0)&& (text="");
+		this.text=text;
+	}
+
+	__class(Label,'laya.ui.Label',_super);
+	var __proto=Label.prototype;
+	/**@inheritDoc */
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		_super.prototype.destroy.call(this,destroyChild);
+		this._tf=null;
+	}
+
+	/**@inheritDoc */
+	__proto.createChildren=function(){
+		this.addChild(this._tf=new Text());
+	}
+
+	/**@copy laya.display.Text#changeText()
+	**/
+	__proto.changeText=function(text){
+		this._tf.changeText(text);
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.measureWidth=function(){
+		return this._tf.width;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto.measureHeight=function(){
+		return this._tf.height;
+	}
+
+	/**
+	*<p>边距信息</p>
+	*<p>"上边距，右边距，下边距 , 左边距（边距以像素为单位）"</p>
+	*@see laya.display.Text.padding
+	*/
+	__getset(0,__proto,'padding',function(){
+		return this._tf.padding.join(",");
+		},function(value){
+		this._tf.padding=UIUtils.fillArray(Styles.labelPadding,value,Number);
+	});
+
+	/**
+	*@copy laya.display.Text#bold
+	*/
+	__getset(0,__proto,'bold',function(){
+		return this._tf.bold;
+		},function(value){
+		this._tf.bold=value;
+	});
+
+	/**
+	*@copy laya.display.Text#align
+	*/
+	__getset(0,__proto,'align',function(){
+		return this._tf.align;
+		},function(value){
+		this._tf.align=value;
+	});
+
+	/**
+	*当前文本内容字符串。
+	*@see laya.display.Text.text
+	*/
+	__getset(0,__proto,'text',function(){
+		return this._tf.text;
+		},function(value){
+		if (this._tf.text !=value){
+			if(value)
+				value=UIUtils.adptString(value+"");
+			this._tf.text=value;
+			this.event("change");
+			if (!this._width || !this._height)this.onCompResize();
+		}
+	});
+
+	/**
+	*@copy laya.display.Text#italic
+	*/
+	__getset(0,__proto,'italic',function(){
+		return this._tf.italic;
+		},function(value){
+		this._tf.italic=value;
+	});
+
+	/**
+	*@copy laya.display.Text#wordWrap
+	*/
+	/**
+	*@copy laya.display.Text#wordWrap
+	*/
+	__getset(0,__proto,'wordWrap',function(){
+		return this._tf.wordWrap;
+		},function(value){
+		this._tf.wordWrap=value;
+	});
+
+	/**
+	*@copy laya.display.Text#font
+	*/
+	__getset(0,__proto,'font',function(){
+		return this._tf.font;
+		},function(value){
+		this._tf.font=value;
+	});
+
+	/**@inheritDoc */
+	__getset(0,__proto,'dataSource',_super.prototype._$get_dataSource,function(value){
+		this._dataSource=value;
+		if ((typeof value=='number')|| (typeof value=='string'))this.text=value+"";
+		else Laya.superSet(UIComponent,this,'dataSource',value);
+	});
+
+	/**
+	*@copy laya.display.Text#color
+	*/
+	__getset(0,__proto,'color',function(){
+		return this._tf.color;
+		},function(value){
+		this._tf.color=value;
+	});
+
+	/**
+	*@copy laya.display.Text#valign
+	*/
+	__getset(0,__proto,'valign',function(){
+		return this._tf.valign;
+		},function(value){
+		this._tf.valign=value;
+	});
+
+	/**
+	*@copy laya.display.Text#leading
+	*/
+	__getset(0,__proto,'leading',function(){
+		return this._tf.leading;
+		},function(value){
+		this._tf.leading=value;
+	});
+
+	/**
+	*@copy laya.display.Text#fontSize
+	*/
+	__getset(0,__proto,'fontSize',function(){
+		return this._tf.fontSize;
+		},function(value){
+		this._tf.fontSize=value;
+	});
+
+	/**
+	*@copy laya.display.Text#bgColor
+	*/
+	__getset(0,__proto,'bgColor',function(){
+		return this._tf.bgColor
+		},function(value){
+		this._tf.bgColor=value;
+	});
+
+	/**
+	*@copy laya.display.Text#borderColor
+	*/
+	__getset(0,__proto,'borderColor',function(){
+		return this._tf.borderColor
+		},function(value){
+		this._tf.borderColor=value;
+	});
+
+	/**
+	*@copy laya.display.Text#stroke
+	*/
+	__getset(0,__proto,'stroke',function(){
+		return this._tf.stroke;
+		},function(value){
+		this._tf.stroke=value;
+	});
+
+	/**
+	*@copy laya.display.Text#strokeColor
+	*/
+	__getset(0,__proto,'strokeColor',function(){
+		return this._tf.strokeColor;
+		},function(value){
+		this._tf.strokeColor=value;
+	});
+
+	/**
+	*文本控件实体 <code>Text</code> 实例。
+	*/
+	__getset(0,__proto,'textField',function(){
+		return this._tf;
+	});
+
+	/**
+	*@inheritDoc
+	*/
+	/**
+	*@inheritDoc
+	*/
+	__getset(0,__proto,'width',function(){
+		if (this._width || this._tf.text)return Laya.superGet(UIComponent,this,'width');
+		return 0;
+		},function(value){
+		Laya.superSet(UIComponent,this,'width',value);
+		this._tf.width=value;
+	});
+
+	/**
+	*@inheritDoc
+	*/
+	/**
+	*@inheritDoc
+	*/
+	__getset(0,__proto,'height',function(){
+		if (this._height || this._tf.text)return Laya.superGet(UIComponent,this,'height');
+		return 0;
+		},function(value){
+		Laya.superSet(UIComponent,this,'height',value);
+		this._tf.height=value;
+	});
+
+	/**
+	*@copy laya.display.Text#overflow
+	*/
+	/**
+	*@copy laya.display.Text#overflow
+	*/
+	__getset(0,__proto,'overflow',function(){
+		return this._tf.overflow;
+		},function(value){
+		this._tf.overflow=value;
+	});
+
+	/**
+	*@copy laya.display.Text#underline
+	*/
+	/**
+	*@copy laya.display.Text#underline
+	*/
+	__getset(0,__proto,'underline',function(){
+		return this._tf.underline;
+		},function(value){
+		this._tf.underline=value;
+	});
+
+	/**
+	*@copy laya.display.Text#underlineColor
+	*/
+	/**
+	*@copy laya.display.Text#underlineColor
+	*/
+	__getset(0,__proto,'underlineColor',function(){
+		return this._tf.underlineColor;
+		},function(value){
+		this._tf.underlineColor=value;
+	});
+
+	return Label;
+})(UIComponent)
 
 
 /**
@@ -92969,6 +92931,47 @@ var tradingconfirm=(function(_super){
 	//close();
 	__proto.onDisable=function(){}
 	return tradingconfirm;
+})(Dialog)
+
+
+//class script.carddetail.canceltradedialog extends laya.ui.Dialog
+var canceltradedialog=(function(_super){
+	function canceltradedialog(){
+		canceltradedialog.__super.call(this);;
+	}
+
+	__class(canceltradedialog,'script.carddetail.canceltradedialog',_super);
+	var __proto=canceltradedialog.prototype;
+	__proto.createChildren=function(){
+		laya.display.Scene.prototype.createChildren.call(this);
+		this.loadScene("carddetail/Cancel_Trade");
+	}
+
+	__proto.onCancelClick=function(e){
+		this.close();
+	}
+
+	__proto.onConfirmClick=function(e){
+		Browser.window.login();
+		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTCTR$"+Browser.window.m_CardID+"$00000",
+		function(){
+			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Cancel_Trade_Callback();
+			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();
+		},
+		function(){
+			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Cancel_Trade_Error_Callback();
+			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();
+		});
+	}
+
+	//close();
+	__proto.onEnable=function(){
+		/*no*/this.m_Cancel.on("click",this,this.onCancelClick);
+		/*no*/this.m_Confirm.on("click",this,this.onConfirmClick);
+	}
+
+	__proto.onDisable=function(){}
+	return canceltradedialog;
 })(Dialog)
 
 
