@@ -80302,6 +80302,7 @@ var userinfo=(function(_super){
 		this.m_HR_EOS=null;
 		this.m_HR_DUST=null;
 		this.m_HR_USER=null;
+		this.m_HR_GLB=null;
 		userinfo.__super.call(this);
 	}
 
@@ -80334,12 +80335,12 @@ var userinfo=(function(_super){
 	__proto.onDividendClick=function(e){
 		Browser.window.login();
 		Browser.window.action_transfer_callback_error("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTDIV$00000",
-		function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();
-			Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();
+		function(){
+			Browser.window.GLOBAL_CLASS_USER_INFO.refreshAll();
 			Browser.window.GLOBAL_CLASS_USER_INFO.Dividend_Callback();
 		},
-		function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();
-			Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();
+		function(){
+			Browser.window.GLOBAL_CLASS_USER_INFO.refreshAll();
 			Browser.window.GLOBAL_CLASS_USER_INFO.Dividend_Error_Callback();
 		});
 	}
@@ -80347,12 +80348,12 @@ var userinfo=(function(_super){
 	__proto.onJackpotClick=function(e){
 		Browser.window.login();
 		Browser.window.action_transfer_callback_error("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTJKP$00000",
-		function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();
-			Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();
+		function(){
+			Browser.window.GLOBAL_CLASS_USER_INFO.refreshAll();
 			Browser.window.GLOBAL_CLASS_USER_INFO.Jackpot_Callback();
 		},
-		function(){Browser.window.GLOBAL_CLASS_USER_INFO.Refresh();
-			Browser.window.GLOBAL_CLASS_USER_INFO.Refresh_DUST();
+		function(){
+			Browser.window.GLOBAL_CLASS_USER_INFO.refreshAll();
 			Browser.window.GLOBAL_CLASS_USER_INFO.Jackpot_Error_Callback();
 		});
 	}
@@ -80391,35 +80392,40 @@ var userinfo=(function(_super){
 		/*no*/this.m_Dividend_Button.on("click",this,this.onDividendClick);
 		Browser.window.GLOBAL_CLASS_USER_INFO=this;
 		Laya.timer.loop(2000,this,this.animateTimeBased);
-		this.Refresh();
+		this.refreshAll();
+	}
+
+	__proto.refreshAll=function(){
+		this.Refresh_EOS();
 		this.Refresh_DUST();
 		this.Refresh_USER();
+		this.Refresh_GLB();
+	}
+
+	__proto.onRefreshClick=function(e){
+		this.refreshAll();
 	}
 
 	__proto.onDisable=function(){}
 	////////////////////////////////////////
-	__proto.Refresh=function(){
+	__proto.Refresh_EOS=function(){
 		this.m_HR_EOS=new HttpRequest();
-		this.m_HR_EOS.once("progress",this,this.onHttpRequestProgress);
-		this.m_HR_EOS.once("complete",this,this.onHttpRequestComplete);
-		this.m_HR_EOS.once("error",this,this.onHttpRequestError);
+		this.m_HR_EOS.once("progress",this,this.onHttpRequestProgress_EOS);
+		this.m_HR_EOS.once("complete",this,this.onHttpRequestComplete_EOS);
+		this.m_HR_EOS.once("error",this,this.onHttpRequestError_EOS);
 		var postdata="{\"code\":\"eosio.token\",\"account\":\""+Browser.window.GLOBAL_DATA.username+"\",\"symbol\":\""+"EOS"+"\"}";
 		this.m_HR_EOS.send('https://geo.eosasia.one:443/v1/chain/get_currency_balance',postdata,'post','text');
 	}
 
-	__proto.onRefreshClick=function(e){
-		this.Refresh();
-	}
-
-	__proto.onHttpRequestError=function(e){
+	__proto.onHttpRequestError_EOS=function(e){
 		console.log(e);
 	}
 
-	__proto.onHttpRequestProgress=function(e){
+	__proto.onHttpRequestProgress_EOS=function(e){
 		console.log(e)
 	}
 
-	__proto.onHttpRequestComplete=function(e){
+	__proto.onHttpRequestComplete_EOS=function(e){
 		var jo=(JSON.parse(this.m_HR_EOS.data));
 		console.log(jo);
 		if(jo.length!=0){
@@ -80489,10 +80495,63 @@ var userinfo=(function(_super){
 		}
 	}
 
+	__proto.Refresh_GLB=function(){
+		this.m_HR_GLB=new HttpRequest();
+		this.m_HR_GLB.once("progress",this,this.onHttpRequestProgress_GLB);
+		this.m_HR_GLB.once("complete",this,this.onHttpRequestComplete_GLB);
+		this.m_HR_GLB.once("error",this,this.onHttpRequestError_GLB);
+		var postdata="{";
+		postdata+="\"code\":\"gameofcrown1\",\"json\":true,\"limit\":\"10\",";
+		postdata+="\"scope\":\""+"gameofcrown1"+"\",";
+		postdata+="\"table\":\"topglbb\"";
+		postdata+="}";
+		this.m_HR_GLB.send('https://geo.eosasia.one:443/v1/chain/get_table_rows',postdata,'post','text');
+	}
+
+	__proto.onHttpRequestError_GLB=function(e){
+		console.log(e);
+	}
+
+	__proto.onHttpRequestProgress_GLB=function(e){
+		console.log(e)
+	}
+
+	__proto.onHttpRequestComplete_GLB=function(e){
+		try{
+			var jo=(JSON.parse(this.m_HR_GLB.data));
+			console.log(jo);
+			Browser.window.GLOBAL_JACKPOT_DATA=jo;
+			Browser.window.GLOBAL_CLASS_USER_INFO.UpdateData();
+		}
+		catch (error){
+		}
+	}
+
 	/////////////////////////////////////////////////////////////////////
 	__proto.UpdateData=function(){
 		/*no*/this.m_Asset_EOS_Label.text="EOS:"+Browser.window.GLOBAL_DATA.user_asset_eos;
 		/*no*/this.m_Asset_DUST_Label.text="天书残卷:"+Browser.window.GLOBAL_DATA.user_asset_dust;
+		try{
+			var str=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].pool;
+			var divs=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].divpools;
+			var dive=Browser.window.GLOBAL_JACKPOT_DATA.rows[0].divpoole;
+			divs=parseFloat(divs);
+			dive=parseFloat(dive);
+			var totalcards=parseFloat(Browser.window.GLOBAL_JACKPOT_DATA.rows[0].totalcards);
+			var totalcarde=parseFloat(Browser.window.GLOBAL_JACKPOT_DATA.rows[0].totalcarde);
+			var ssum=0;var esum=0;
+			for(/*no*/this.i=0;/*no*/this.i<=35;/*no*/this.i++){
+				ssum+=parseFloat(Browser.window.GLOBAL_USER_DATA.rows[0].cards[/*no*/this.i]);
+			}
+			for(/*no*/this.i=36;/*no*/this.i<=107;/*no*/this.i++){
+				esum+=parseFloat(Browser.window.GLOBAL_USER_DATA.rows[0].cards[/*no*/this.i]);
+			};
+			var divback=divs*ssum/totalcards+dive*esum/totalcarde;
+			divback*=0.1;
+			/*no*/this.m_Div_Amount_Label.text="可领取分红约为 "+divback.toFixed(4)+" EOS";
+		}
+		catch (error){
+		}
 	}
 
 	return userinfo;
