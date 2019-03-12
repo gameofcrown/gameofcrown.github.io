@@ -14,7 +14,12 @@ window.action_sell_card = (code, user, cardid,cardnum,asset,func,func_error) => 
             );
         }).catch(err => {
             console.error(err);
-           
+            window.setTimeout(
+                function(){
+                    func_error();
+                }
+                ,1500
+            );
         })
     })
 }
@@ -28,12 +33,7 @@ window.action_transfer = (code, from,to,asset,memo) => {
            
         }).catch(err => {
             console.error(err);
-            window.setTimeout(
-                function(){
-                    func_error();
-                }
-                ,1500
-            );
+          
            
         })
     })

@@ -79383,13 +79383,16 @@ var drawcard=(function(_super){
 		drawcard.m_Card_Type=Browser.window.m_CardType;
 		switch(drawcard.m_Card_Type){
 			case "S":
-				/*no*/this.m_Card_Type_Label.text="EOS 天罡卡";
+				/*no*/this.m_Card_Type_Label.text="1 EOS 天罡卡";
+				/*no*/this.m_Symbol_Logo.texture="UI/EOS.png"
 				break ;
 			case "E":
-				/*no*/this.m_Card_Type_Label.text="EOS 地煞卡";
+				/*no*/this.m_Card_Type_Label.text="1 EOS 地煞卡";
+				/*no*/this.m_Symbol_Logo.texture="UI/EOS.png"
 				break ;
 			case "All":
-				/*no*/this.m_Card_Type_Label.text="DUST 全卡池";
+				/*no*/this.m_Card_Type_Label.text="10 天书残卷 全卡池";
+				/*no*/this.m_Symbol_Logo.texture="UI/DUST.png"
 				break ;
 			}
 		/*no*/this.m_Summon_Button.on("click",this,this.onSummonClick);
@@ -80488,8 +80491,8 @@ var userinfo=(function(_super){
 
 	/////////////////////////////////////////////////////////////////////
 	__proto.UpdateData=function(){
-		/*no*/this.m_Asset_EOS_Label.text="EOS余额:"+Browser.window.GLOBAL_DATA.user_asset_eos;
-		/*no*/this.m_Asset_DUST_Label.text="DUST余额:"+Browser.window.GLOBAL_DATA.user_asset_dust;
+		/*no*/this.m_Asset_EOS_Label.text="EOS:"+Browser.window.GLOBAL_DATA.user_asset_eos;
+		/*no*/this.m_Asset_DUST_Label.text="天书残卷:"+Browser.window.GLOBAL_DATA.user_asset_dust;
 	}
 
 	return userinfo;
@@ -92953,7 +92956,7 @@ var canceltradedialog=(function(_super){
 
 	__proto.onConfirmClick=function(e){
 		Browser.window.login();
-		Browser.window.action_transfer_callback("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTCTR$"+Browser.window.m_CardID+"$00000",
+		Browser.window.action_transfer_callback_error("eosio.token",Browser.window.GLOBAL_DATA.username,"gameofcrown1","0.0001 EOS","STARDUSTCTR$"+Browser.window.m_CardID+"$00000",
 		function(){
 			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Cancel_Trade_Callback();
 			Browser.window.GLOBAL_CLASS_CARD_DETAIL.Refresh();
