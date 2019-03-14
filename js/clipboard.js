@@ -16,7 +16,7 @@ function copyToClipBoard(copyTxt)
     createInput.className = 'createInput';
 
     createInput.style.display='none';
-    document.removeChild(createInput);
+    document.body.removeChild(createInput);
 
     //layer.msg('复制成功，可以粘贴了！');//没有layui的可以改为alert
 
