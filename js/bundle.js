@@ -52467,7 +52467,8 @@ var TerrainFilter=(function(_super){
 		for (i=0;i < this._leafNum;i++){
 			x=i % nNum;
 			z=Math.floor(i / nNum);
-			this._leafs[i].calcVertextBuffer(this._chunkOffsetX,this._chunkOffsetZ,x *TerrainLeaf.LEAF_GRID_NUM,z *TerrainLeaf.LEAF_GRID_NUM,this._gridSize,vertices,i *TerrainLeaf.LEAF_PLANE_VERTEXT_COUNT,vertexFloatStride,this._terrainHeightData,this._terrainHeightDataWidth,this._terrainHeightDataHeight,this._cameraCoordinateInverse);
+			this._leafs[i].calcVertextBuffer(this._chunkOffsetX,this._chunkOffsetZ,x *TerrainLeaf.LEAF_GRID_NUM
+			,z *TerrainLeaf.LEAF_GRID_NUM,this._gridSize,vertices,i *TerrainLeaf.LEAF_PLANE_VERTEXT_COUNT,vertexFloatStride,this._terrainHeightData,this._terrainHeightDataWidth,this._terrainHeightDataHeight,this._cameraCoordinateInverse);
 		}
 		for (i=0;i < this._leafNum;i++){
 			x=i % nNum;
@@ -80284,7 +80285,7 @@ var gamelogo=(function(_super){
 		if(Browser.window.GLOBAL_DATA.welcome==true){
 			Browser.window.GLOBAL_DATA.welcome=false;
 			var m_DlgCallback=new Info_Dlg();
-			m_DlgCallback.SetText("集齐108张卡片领取大奖,集不齐的用户还可以领取分红奖励.");
+			m_DlgCallback.SetText("集齐108张卡片领取大奖,集不齐的用户还可以领取分红奖励.在你之后入场的用户越多,你领的分红就越多");
 			m_DlgCallback.show();
 			m_DlgCallback.repaint();
 		}
