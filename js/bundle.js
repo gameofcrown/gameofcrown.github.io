@@ -80386,10 +80386,26 @@ var userinfo=(function(_super){
 		m_DlgCallback.popup();
 	}
 
+	__proto.onIntroClick=function(e){
+		var m_DlgCallback=new Info_Dlg();
+		var str=Browser.window.location.href+"?"+Browser.window.Base64.encode(Browser.window.GLOBAL_DATA.username);
+		Browser.window.copyToClipBoard(str);
+		m_DlgCallback.SetText("已复制链接到剪贴板:"+str);
+		m_DlgCallback.popup();
+	}
+
+	__proto.onDivInfoClick=function(e){
+		var m_DlgCallback=new Info_Dlg();
+		m_DlgCallback.SetText("根据你持有的人物卡片数量,不论你是如何获得,按照此数量与所有用户卡片总量的比例分奖池的一部分.每隔20小时就可以免费领取分红,领取分红还会送可以免费抽卡的『天书残卷』");
+		m_DlgCallback.popup();
+	}
+
 	__proto.onEnable=function(){
 		/*no*/this.m_To_Game_Navi_Button.on("click",this,this.onBackToNavi);
 		/*no*/this.m_Jackpot_Button.on("click",this,this.onJackpotClick);
 		/*no*/this.m_Dividend_Button.on("click",this,this.onDividendClick);
+		/*no*/this.m_Intro_Button.on("click",this,this.onIntroClick);
+		/*no*/this.m_Div_Info_Button.on("click",this,this.onDivInfoClick);
 		Browser.window.GLOBAL_CLASS_USER_INFO=this;
 		Laya.timer.loop(2000,this,this.animateTimeBased);
 		this.refreshAll();
