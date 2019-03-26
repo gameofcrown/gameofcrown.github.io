@@ -1,7 +1,7 @@
 
 function _GLOBAL_DATA()
 {
-    this.username="gigaofcolony";
+    this.username="";
     this.userinfo=null;
     this.user_asset_eos="";
     this.welcome=true;
