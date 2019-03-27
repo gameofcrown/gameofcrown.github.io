@@ -670,6 +670,7 @@ var GameConfig=(function(){
 	__class(GameConfig,'GameConfig');
 	GameConfig.init=function(){
 		var reg=ClassUtils.regClass;
+		reg("mainpage.MainPage_Scene",MainPage_Scene);
 	}
 
 	GameConfig.width=640;
@@ -43239,113 +43240,6 @@ var Node=(function(_super){
 
 
 /**
-*文本的样式类
-*/
-//class laya.display.css.TextStyle extends laya.display.css.SpriteStyle
-var TextStyle=(function(_super){
-	function TextStyle(){
-		/**
-		*表示使用此文本格式的文本是否为斜体。
-		*@default false
-		*/
-		this.italic=false;
-		/**
-		*<p>表示使用此文本格式的文本段落的水平对齐方式。</p>
-		*@default "left"
-		*/
-		//this.align=null;
-		/**
-		*<p>表示使用此文本格式的文本字段是否自动换行。</p>
-		*如果 wordWrap 的值为 true，则该文本字段自动换行；如果值为 false，则该文本字段不自动换行。
-		*@default false。
-		*/
-		//this.wordWrap=false;
-		/**
-		*<p>垂直行间距（以像素为单位）</p>
-		*/
-		//this.leading=NaN;
-		/**
-		*<p>默认边距信息</p>
-		*<p>[左边距，上边距，右边距，下边距]（边距以像素为单位）</p>
-		*/
-		//this.padding=null;
-		/**
-		*文本背景颜色，以字符串表示。
-		*/
-		//this.bgColor=null;
-		/**
-		*文本边框背景颜色，以字符串表示。
-		*/
-		//this.borderColor=null;
-		/**
-		*<p>指定文本字段是否是密码文本字段。</p>
-		*如果此属性的值为 true，则文本字段被视为密码文本字段，并使用星号而不是实际字符来隐藏输入的字符。如果为 false，则不会将文本字段视为密码文本字段。
-		*/
-		//this.asPassword=false;
-		/**
-		*<p>描边宽度（以像素为单位）。</p>
-		*默认值0，表示不描边。
-		*@default 0
-		*/
-		//this.stroke=NaN;
-		/**
-		*<p>描边颜色，以字符串表示。</p>
-		*@default "#000000";
-		*/
-		//this.strokeColor=null;
-		/**是否为粗体*/
-		//this.bold=false;
-		/**是否显示下划线*/
-		//this.underline=false;
-		/**下划线颜色*/
-		//this.underlineColor=null;
-		/**当前使用的位置字体。*/
-		//this.currBitmapFont=null;
-		TextStyle.__super.call(this);
-	}
-
-	__class(TextStyle,'laya.display.css.TextStyle',_super);
-	var __proto=TextStyle.prototype;
-	__proto.reset=function(){
-		_super.prototype.reset.call(this);
-		this.italic=false;
-		this.align="left";
-		this.wordWrap=false;
-		this.leading=0;
-		this.padding=[0,0,0,0];
-		this.bgColor=null;
-		this.borderColor=null;
-		this.asPassword=false;
-		this.stroke=0;
-		this.strokeColor="#000000";
-		this.bold=false;
-		this.underline=false;
-		this.underlineColor=null;
-		this.currBitmapFont=null;
-		return this;
-	}
-
-	__proto.recover=function(){
-		if (this===TextStyle.EMPTY)
-			return;
-		Pool.recover("TextStyle",this.reset());
-	}
-
-	/**@inheritDoc */
-	__proto.render=function(sprite,context,x,y){
-		(this.bgColor || this.borderColor)&& context.drawRect(x,y,sprite.width,sprite.height,this.bgColor,this.borderColor,1);
-	}
-
-	TextStyle.create=function(){
-		return Pool.getItemByClass("TextStyle",TextStyle);
-	}
-
-	TextStyle.EMPTY=new TextStyle();
-	return TextStyle;
-})(SpriteStyle)
-
-
-/**
 *@private
 *<code>Resource</code> 资源存取类。
 */
@@ -43568,6 +43462,113 @@ var Resource=(function(_super){
 	Resource._gpuMemory=0;
 	return Resource;
 })(EventDispatcher)
+
+
+/**
+*文本的样式类
+*/
+//class laya.display.css.TextStyle extends laya.display.css.SpriteStyle
+var TextStyle=(function(_super){
+	function TextStyle(){
+		/**
+		*表示使用此文本格式的文本是否为斜体。
+		*@default false
+		*/
+		this.italic=false;
+		/**
+		*<p>表示使用此文本格式的文本段落的水平对齐方式。</p>
+		*@default "left"
+		*/
+		//this.align=null;
+		/**
+		*<p>表示使用此文本格式的文本字段是否自动换行。</p>
+		*如果 wordWrap 的值为 true，则该文本字段自动换行；如果值为 false，则该文本字段不自动换行。
+		*@default false。
+		*/
+		//this.wordWrap=false;
+		/**
+		*<p>垂直行间距（以像素为单位）</p>
+		*/
+		//this.leading=NaN;
+		/**
+		*<p>默认边距信息</p>
+		*<p>[左边距，上边距，右边距，下边距]（边距以像素为单位）</p>
+		*/
+		//this.padding=null;
+		/**
+		*文本背景颜色，以字符串表示。
+		*/
+		//this.bgColor=null;
+		/**
+		*文本边框背景颜色，以字符串表示。
+		*/
+		//this.borderColor=null;
+		/**
+		*<p>指定文本字段是否是密码文本字段。</p>
+		*如果此属性的值为 true，则文本字段被视为密码文本字段，并使用星号而不是实际字符来隐藏输入的字符。如果为 false，则不会将文本字段视为密码文本字段。
+		*/
+		//this.asPassword=false;
+		/**
+		*<p>描边宽度（以像素为单位）。</p>
+		*默认值0，表示不描边。
+		*@default 0
+		*/
+		//this.stroke=NaN;
+		/**
+		*<p>描边颜色，以字符串表示。</p>
+		*@default "#000000";
+		*/
+		//this.strokeColor=null;
+		/**是否为粗体*/
+		//this.bold=false;
+		/**是否显示下划线*/
+		//this.underline=false;
+		/**下划线颜色*/
+		//this.underlineColor=null;
+		/**当前使用的位置字体。*/
+		//this.currBitmapFont=null;
+		TextStyle.__super.call(this);
+	}
+
+	__class(TextStyle,'laya.display.css.TextStyle',_super);
+	var __proto=TextStyle.prototype;
+	__proto.reset=function(){
+		_super.prototype.reset.call(this);
+		this.italic=false;
+		this.align="left";
+		this.wordWrap=false;
+		this.leading=0;
+		this.padding=[0,0,0,0];
+		this.bgColor=null;
+		this.borderColor=null;
+		this.asPassword=false;
+		this.stroke=0;
+		this.strokeColor="#000000";
+		this.bold=false;
+		this.underline=false;
+		this.underlineColor=null;
+		this.currBitmapFont=null;
+		return this;
+	}
+
+	__proto.recover=function(){
+		if (this===TextStyle.EMPTY)
+			return;
+		Pool.recover("TextStyle",this.reset());
+	}
+
+	/**@inheritDoc */
+	__proto.render=function(sprite,context,x,y){
+		(this.bgColor || this.borderColor)&& context.drawRect(x,y,sprite.width,sprite.height,this.bgColor,this.borderColor,1);
+	}
+
+	TextStyle.create=function(){
+		return Pool.getItemByClass("TextStyle",TextStyle);
+	}
+
+	TextStyle.EMPTY=new TextStyle();
+	return TextStyle;
+})(SpriteStyle)
 
 
 /**
@@ -52954,6 +52955,251 @@ var AnimationTransform3D=(function(_super){
 
 
 /**
+*<code>ShaderPass</code> 类用于实现ShaderPass。
+*/
+//class laya.d3.shader.ShaderPass extends laya.webgl.utils.ShaderCompile
+var ShaderPass=(function(_super){
+	function ShaderPass(owner,vs,ps){
+		/**@private */
+		//this._owner=null;
+		/**@private */
+		//this._cacheSharders=null;
+		/**@private */
+		//this._publicValidDefine=0;
+		/**@private */
+		//this._spriteValidDefine=0;
+		/**@private */
+		//this._materialValidDefine=0;
+		/**@private */
+		//this._validDefineMap=null;
+		this._renderState=new RenderState();
+		this._owner=owner;
+		this._cacheSharders=[];
+		this._publicValidDefine=0;
+		this._spriteValidDefine=0;
+		this._materialValidDefine=0;
+		this._validDefineMap={};
+		ShaderPass.__super.call(this,vs,ps,null,this._validDefineMap);
+		var publicDefineMap=this._owner._publicDefinesMap;
+		var spriteDefineMap=this._owner._spriteDefinesMap;
+		var materialDefineMap=this._owner._materialDefinesMap;
+		for (var k in this._validDefineMap){
+			if (publicDefineMap[k] !=null)
+				this._publicValidDefine |=publicDefineMap[k];
+			else if (spriteDefineMap[k] !=null)
+			this._spriteValidDefine |=spriteDefineMap[k];
+			else if (materialDefineMap[k] !=null)
+			this._materialValidDefine |=materialDefineMap[k];
+		}
+	}
+
+	__class(ShaderPass,'laya.d3.shader.ShaderPass',_super);
+	var __proto=ShaderPass.prototype;
+	/**
+	*@private
+	*/
+	__proto._definesToNameDic=function(value,int2Name){
+		var o={};
+		var d=1;
+		for (var i=0;i < 32;i++){
+			d=1 << i;
+			if (d > value)break ;
+			if (value & d){
+				var name=int2Name[d];
+				o[name]="";
+			}
+		}
+		return o;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._compileToTree=function(parent,lines,start,includefiles,defs){
+		var node,preNode;
+		var text,name,fname;
+		var ofs=0,words,noUseNode;
+		var i=0,n=0,j=0;
+		for (i=start;i < lines.length;i++){
+			text=lines[i];
+			if (text.length < 1)continue ;
+			ofs=text.indexOf("//");
+			if (ofs===0)continue ;
+			if (ofs >=0)text=text.substr(0,ofs);
+			node=noUseNode || new ShaderNode(includefiles);
+			noUseNode=null;
+			node.text=text;
+			if ((ofs=text.indexOf("#"))>=0){
+				name="#";
+				for (j=ofs+1,n=text.length;j < n;j++){
+					var c=text.charAt(j);
+					if (c===' ' || c==='\t' || c==='?')break ;
+					name+=c;
+				}
+				node.name=name;
+				switch (name){
+					case "#ifdef":
+					case "#ifndef":
+						node.setParent(parent);
+						parent=node;
+						if (defs){
+							words=text.substr(j).split(ShaderCompile._splitToWordExps3);
+							for (j=0;j < words.length;j++){
+								text=words[j];
+								text.length && (defs[text]=true);
+							}
+						}
+						continue ;
+					case "#if":
+					case "#elif":
+						node.setParent(parent);
+						parent=node;
+						if (defs){
+							words=text.substr(j).split(ShaderCompile._splitToWordExps3);
+							for (j=0;j < words.length;j++){
+								text=words[j];
+								text.length && text !="defined" && (defs[text]=true);
+							}
+						}
+						continue ;
+					case "#else":
+						parent=parent.parent;
+						preNode=parent.childs[parent.childs.length-1];
+						node.setParent(parent);
+						parent=node;
+						continue ;
+					case "#endif":
+						parent=parent.parent;
+						preNode=parent.childs[parent.childs.length-1];
+						node.setParent(parent);
+						continue ;
+					case "#include":
+						words=ShaderCompile.splitToWords(text,null);
+						var inlcudeFile=ShaderCompile.includes[words[1]];
+						if (!inlcudeFile){
+							throw "ShaderCompile error no this include file:"+words[1];
+						}
+						if ((ofs=words[0].indexOf("?"))< 0){
+							node.setParent(parent);
+							text=inlcudeFile.getWith(words[2]=='with' ? words[3] :null);
+							this._compileToTree(node,text.split('\n'),0,includefiles,defs);
+							node.text="";
+							continue ;
+						}
+						node.setCondition(words[0].substr(ofs+1),1);
+						node.text=inlcudeFile.getWith(words[2]=='with' ? words[3] :null);
+						break ;
+					case "#import":
+						words=ShaderCompile.splitToWords(text,null);
+						fname=words[1];
+						includefiles.push({node:node,file:ShaderCompile.includes[fname],ofs:node.text.length});
+						continue ;
+					}
+				}else {
+				preNode=parent.childs[parent.childs.length-1];
+				if (preNode && !preNode.name){
+					includefiles.length > 0 && ShaderCompile.splitToWords(text,preNode);
+					noUseNode=node;
+					preNode.text+="\n"+text;
+					continue ;
+				}
+				includefiles.length > 0 && ShaderCompile.splitToWords(text,node);
+			}
+			node.setParent(parent);
+		}
+	}
+
+	/**
+	*@private
+	*/
+	__proto.withCompile=function(publicDefine,spriteDefine,materialDefine){
+		publicDefine &=this._publicValidDefine;
+		spriteDefine &=this._spriteValidDefine;
+		materialDefine &=this._materialValidDefine;
+		var shader;
+		var spriteDefShaders,materialDefShaders;
+		spriteDefShaders=this._cacheSharders[publicDefine];
+		if (spriteDefShaders){
+			materialDefShaders=spriteDefShaders[spriteDefine];
+			if (materialDefShaders){
+				shader=materialDefShaders[materialDefine];
+				if (shader)
+					return shader;
+				}else {
+				materialDefShaders=spriteDefShaders[spriteDefine]=[];
+			}
+			}else {
+			spriteDefShaders=this._cacheSharders[publicDefine]=[];
+			materialDefShaders=spriteDefShaders[spriteDefine]=[];
+		};
+		var publicDefGroup=this._definesToNameDic(publicDefine,this._owner._publicDefines);
+		var spriteDefGroup=this._definesToNameDic(spriteDefine,this._owner._spriteDefines);
+		var materialDefGroup=this._definesToNameDic(materialDefine,this._owner._materialDefines);
+		var key;
+		if (Shader3D.debugMode){
+			var publicDefGroupStr="";
+			for (key in publicDefGroup)
+			publicDefGroupStr+=key+" ";
+			var spriteDefGroupStr="";
+			for (key in spriteDefGroup)
+			spriteDefGroupStr+=key+" ";
+			var materialDefGroupStr="";
+			for (key in materialDefGroup)
+			materialDefGroupStr+=key+" ";
+			if (!WebGL.shaderHighPrecision)
+				publicDefine+=Shader3D.SHADERDEFINE_HIGHPRECISION;
+			console.log("%cShader3DDebugMode---(Name:"+this._owner._owner._name+" PassIndex:"+this._owner._passes.indexOf(this)+" PublicDefine:"+publicDefine+" SpriteDefine:"+spriteDefine+" MaterialDefine:"+materialDefine+" PublicDefineGroup:"+publicDefGroupStr+" SpriteDefineGroup:"+spriteDefGroupStr+"MaterialDefineGroup: "+materialDefGroupStr+")---ShaderCompile3DDebugMode","color:green");
+		};
+		var defMap={};
+		var defineStr="";
+		if (publicDefGroup){
+			for (key in publicDefGroup){
+				defineStr+="#define "+key+"\n";
+				defMap[key]=true;
+			}
+		}
+		if (spriteDefGroup){
+			for (key in spriteDefGroup){
+				defineStr+="#define "+key+"\n";
+				defMap[key]=true;
+			}
+		}
+		if (materialDefGroup){
+			for (key in materialDefGroup){
+				defineStr+="#define "+key+"\n";
+				defMap[key]=true;
+			}
+		};
+		var vs=this._VS.toscript(defMap,[]);
+		var vsVersion='';
+		if (vs[0].indexOf('#version')==0){
+			vsVersion=vs[0]+'\n';
+			vs.shift();
+		};
+		var ps=this._PS.toscript(defMap,[]);
+		var psVersion='';
+		if (ps[0].indexOf('#version')==0){
+			psVersion=ps[0]+'\n';
+			ps.shift();
+		}
+		shader=new ShaderInstance(vsVersion+defineStr+vs.join('\n'),psVersion+defineStr+ps.join('\n'),this._owner._attributeMap,this._owner._uniformMap);
+		materialDefShaders[materialDefine]=shader;
+		return shader;
+	}
+
+	/**
+	*获取渲染状态。
+	*@return 渲染状态。
+	*/
+	__getset(0,__proto,'renderState',function(){
+		return this._renderState;
+	});
+
+	return ShaderPass;
+})(ShaderCompile)
+
+
+/**
 *<code>Animator</code> 类用于创建动画组件。
 */
 //class laya.d3.component.Animator extends laya.components.Component
@@ -54308,251 +54554,6 @@ var Animator=(function(_super){
 })(Component)
 
 
-/**
-*<code>ShaderPass</code> 类用于实现ShaderPass。
-*/
-//class laya.d3.shader.ShaderPass extends laya.webgl.utils.ShaderCompile
-var ShaderPass=(function(_super){
-	function ShaderPass(owner,vs,ps){
-		/**@private */
-		//this._owner=null;
-		/**@private */
-		//this._cacheSharders=null;
-		/**@private */
-		//this._publicValidDefine=0;
-		/**@private */
-		//this._spriteValidDefine=0;
-		/**@private */
-		//this._materialValidDefine=0;
-		/**@private */
-		//this._validDefineMap=null;
-		this._renderState=new RenderState();
-		this._owner=owner;
-		this._cacheSharders=[];
-		this._publicValidDefine=0;
-		this._spriteValidDefine=0;
-		this._materialValidDefine=0;
-		this._validDefineMap={};
-		ShaderPass.__super.call(this,vs,ps,null,this._validDefineMap);
-		var publicDefineMap=this._owner._publicDefinesMap;
-		var spriteDefineMap=this._owner._spriteDefinesMap;
-		var materialDefineMap=this._owner._materialDefinesMap;
-		for (var k in this._validDefineMap){
-			if (publicDefineMap[k] !=null)
-				this._publicValidDefine |=publicDefineMap[k];
-			else if (spriteDefineMap[k] !=null)
-			this._spriteValidDefine |=spriteDefineMap[k];
-			else if (materialDefineMap[k] !=null)
-			this._materialValidDefine |=materialDefineMap[k];
-		}
-	}
-
-	__class(ShaderPass,'laya.d3.shader.ShaderPass',_super);
-	var __proto=ShaderPass.prototype;
-	/**
-	*@private
-	*/
-	__proto._definesToNameDic=function(value,int2Name){
-		var o={};
-		var d=1;
-		for (var i=0;i < 32;i++){
-			d=1 << i;
-			if (d > value)break ;
-			if (value & d){
-				var name=int2Name[d];
-				o[name]="";
-			}
-		}
-		return o;
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto._compileToTree=function(parent,lines,start,includefiles,defs){
-		var node,preNode;
-		var text,name,fname;
-		var ofs=0,words,noUseNode;
-		var i=0,n=0,j=0;
-		for (i=start;i < lines.length;i++){
-			text=lines[i];
-			if (text.length < 1)continue ;
-			ofs=text.indexOf("//");
-			if (ofs===0)continue ;
-			if (ofs >=0)text=text.substr(0,ofs);
-			node=noUseNode || new ShaderNode(includefiles);
-			noUseNode=null;
-			node.text=text;
-			if ((ofs=text.indexOf("#"))>=0){
-				name="#";
-				for (j=ofs+1,n=text.length;j < n;j++){
-					var c=text.charAt(j);
-					if (c===' ' || c==='\t' || c==='?')break ;
-					name+=c;
-				}
-				node.name=name;
-				switch (name){
-					case "#ifdef":
-					case "#ifndef":
-						node.setParent(parent);
-						parent=node;
-						if (defs){
-							words=text.substr(j).split(ShaderCompile._splitToWordExps3);
-							for (j=0;j < words.length;j++){
-								text=words[j];
-								text.length && (defs[text]=true);
-							}
-						}
-						continue ;
-					case "#if":
-					case "#elif":
-						node.setParent(parent);
-						parent=node;
-						if (defs){
-							words=text.substr(j).split(ShaderCompile._splitToWordExps3);
-							for (j=0;j < words.length;j++){
-								text=words[j];
-								text.length && text !="defined" && (defs[text]=true);
-							}
-						}
-						continue ;
-					case "#else":
-						parent=parent.parent;
-						preNode=parent.childs[parent.childs.length-1];
-						node.setParent(parent);
-						parent=node;
-						continue ;
-					case "#endif":
-						parent=parent.parent;
-						preNode=parent.childs[parent.childs.length-1];
-						node.setParent(parent);
-						continue ;
-					case "#include":
-						words=ShaderCompile.splitToWords(text,null);
-						var inlcudeFile=ShaderCompile.includes[words[1]];
-						if (!inlcudeFile){
-							throw "ShaderCompile error no this include file:"+words[1];
-						}
-						if ((ofs=words[0].indexOf("?"))< 0){
-							node.setParent(parent);
-							text=inlcudeFile.getWith(words[2]=='with' ? words[3] :null);
-							this._compileToTree(node,text.split('\n'),0,includefiles,defs);
-							node.text="";
-							continue ;
-						}
-						node.setCondition(words[0].substr(ofs+1),1);
-						node.text=inlcudeFile.getWith(words[2]=='with' ? words[3] :null);
-						break ;
-					case "#import":
-						words=ShaderCompile.splitToWords(text,null);
-						fname=words[1];
-						includefiles.push({node:node,file:ShaderCompile.includes[fname],ofs:node.text.length});
-						continue ;
-					}
-				}else {
-				preNode=parent.childs[parent.childs.length-1];
-				if (preNode && !preNode.name){
-					includefiles.length > 0 && ShaderCompile.splitToWords(text,preNode);
-					noUseNode=node;
-					preNode.text+="\n"+text;
-					continue ;
-				}
-				includefiles.length > 0 && ShaderCompile.splitToWords(text,node);
-			}
-			node.setParent(parent);
-		}
-	}
-
-	/**
-	*@private
-	*/
-	__proto.withCompile=function(publicDefine,spriteDefine,materialDefine){
-		publicDefine &=this._publicValidDefine;
-		spriteDefine &=this._spriteValidDefine;
-		materialDefine &=this._materialValidDefine;
-		var shader;
-		var spriteDefShaders,materialDefShaders;
-		spriteDefShaders=this._cacheSharders[publicDefine];
-		if (spriteDefShaders){
-			materialDefShaders=spriteDefShaders[spriteDefine];
-			if (materialDefShaders){
-				shader=materialDefShaders[materialDefine];
-				if (shader)
-					return shader;
-				}else {
-				materialDefShaders=spriteDefShaders[spriteDefine]=[];
-			}
-			}else {
-			spriteDefShaders=this._cacheSharders[publicDefine]=[];
-			materialDefShaders=spriteDefShaders[spriteDefine]=[];
-		};
-		var publicDefGroup=this._definesToNameDic(publicDefine,this._owner._publicDefines);
-		var spriteDefGroup=this._definesToNameDic(spriteDefine,this._owner._spriteDefines);
-		var materialDefGroup=this._definesToNameDic(materialDefine,this._owner._materialDefines);
-		var key;
-		if (Shader3D.debugMode){
-			var publicDefGroupStr="";
-			for (key in publicDefGroup)
-			publicDefGroupStr+=key+" ";
-			var spriteDefGroupStr="";
-			for (key in spriteDefGroup)
-			spriteDefGroupStr+=key+" ";
-			var materialDefGroupStr="";
-			for (key in materialDefGroup)
-			materialDefGroupStr+=key+" ";
-			if (!WebGL.shaderHighPrecision)
-				publicDefine+=Shader3D.SHADERDEFINE_HIGHPRECISION;
-			console.log("%cShader3DDebugMode---(Name:"+this._owner._owner._name+" PassIndex:"+this._owner._passes.indexOf(this)+" PublicDefine:"+publicDefine+" SpriteDefine:"+spriteDefine+" MaterialDefine:"+materialDefine+" PublicDefineGroup:"+publicDefGroupStr+" SpriteDefineGroup:"+spriteDefGroupStr+"MaterialDefineGroup: "+materialDefGroupStr+")---ShaderCompile3DDebugMode","color:green");
-		};
-		var defMap={};
-		var defineStr="";
-		if (publicDefGroup){
-			for (key in publicDefGroup){
-				defineStr+="#define "+key+"\n";
-				defMap[key]=true;
-			}
-		}
-		if (spriteDefGroup){
-			for (key in spriteDefGroup){
-				defineStr+="#define "+key+"\n";
-				defMap[key]=true;
-			}
-		}
-		if (materialDefGroup){
-			for (key in materialDefGroup){
-				defineStr+="#define "+key+"\n";
-				defMap[key]=true;
-			}
-		};
-		var vs=this._VS.toscript(defMap,[]);
-		var vsVersion='';
-		if (vs[0].indexOf('#version')==0){
-			vsVersion=vs[0]+'\n';
-			vs.shift();
-		};
-		var ps=this._PS.toscript(defMap,[]);
-		var psVersion='';
-		if (ps[0].indexOf('#version')==0){
-			psVersion=ps[0]+'\n';
-			ps.shift();
-		}
-		shader=new ShaderInstance(vsVersion+defineStr+vs.join('\n'),psVersion+defineStr+ps.join('\n'),this._owner._attributeMap,this._owner._uniformMap);
-		materialDefShaders[materialDefine]=shader;
-		return shader;
-	}
-
-	/**
-	*获取渲染状态。
-	*@return 渲染状态。
-	*/
-	__getset(0,__proto,'renderState',function(){
-		return this._renderState;
-	});
-
-	return ShaderPass;
-})(ShaderCompile)
-
-
 //class laya.webgl.shader.d2.value.TextureSV extends laya.webgl.shader.d2.value.Value2D
 var TextureSV=(function(_super){
 	function TextureSV(subID){
@@ -54606,57 +54607,6 @@ var FloatKeyframe=(function(_super){
 
 	return FloatKeyframe;
 })(Keyframe)
-
-
-//class laya.webgl.shader.d2.ShaderDefines2D extends laya.webgl.shader.ShaderDefinesBase
-var ShaderDefines2D=(function(_super){
-	function ShaderDefines2D(){
-		ShaderDefines2D.__super.call(this,ShaderDefines2D.__name2int,ShaderDefines2D.__int2name,ShaderDefines2D.__int2nameMap);
-	}
-
-	__class(ShaderDefines2D,'laya.webgl.shader.d2.ShaderDefines2D',_super);
-	ShaderDefines2D.__init__=function(){
-		ShaderDefines2D.reg("TEXTURE2D",0x01);
-		ShaderDefines2D.reg("PRIMITIVE",0x04);
-		ShaderDefines2D.reg("GLOW_FILTER",0x08);
-		ShaderDefines2D.reg("BLUR_FILTER",0x10);
-		ShaderDefines2D.reg("COLOR_FILTER",0x20);
-		ShaderDefines2D.reg("COLOR_ADD",0x40);
-		ShaderDefines2D.reg("WORLDMAT",0x80);
-		ShaderDefines2D.reg("FILLTEXTURE",0x100);
-		ShaderDefines2D.reg("FSHIGHPRECISION",0x400);
-		ShaderDefines2D.reg('MVP3D',0x800);
-	}
-
-	ShaderDefines2D.reg=function(name,value){
-		ShaderDefinesBase._reg(name,value,ShaderDefines2D.__name2int,ShaderDefines2D.__int2name);
-	}
-
-	ShaderDefines2D.toText=function(value,int2name,int2nameMap){
-		return ShaderDefinesBase._toText(value,int2name,int2nameMap);
-	}
-
-	ShaderDefines2D.toInt=function(names){
-		return ShaderDefinesBase._toInt(names,ShaderDefines2D.__name2int);
-	}
-
-	ShaderDefines2D.TEXTURE2D=0x01;
-	ShaderDefines2D.PRIMITIVE=0x04;
-	ShaderDefines2D.FILTERGLOW=0x08;
-	ShaderDefines2D.FILTERBLUR=0x10;
-	ShaderDefines2D.FILTERCOLOR=0x20;
-	ShaderDefines2D.COLORADD=0x40;
-	ShaderDefines2D.WORLDMAT=0x80;
-	ShaderDefines2D.FILLTEXTURE=0x100;
-	ShaderDefines2D.SKINMESH=0x200;
-	ShaderDefines2D.SHADERDEFINE_FSHIGHPRECISION=0x400;
-	ShaderDefines2D.MVP3D=0x800;
-	ShaderDefines2D.NOOPTMASK=0x08|0x10|0x20|0x100;
-	ShaderDefines2D.__name2int={};
-	ShaderDefines2D.__int2name=[];
-	ShaderDefines2D.__int2nameMap=[];
-	return ShaderDefines2D;
-})(ShaderDefinesBase)
 
 
 /**
@@ -54789,6 +54739,320 @@ var SceneLoader=(function(_super){
 	]);
 	return SceneLoader;
 })(EventDispatcher)
+
+
+//class laya.webgl.shader.d2.ShaderDefines2D extends laya.webgl.shader.ShaderDefinesBase
+var ShaderDefines2D=(function(_super){
+	function ShaderDefines2D(){
+		ShaderDefines2D.__super.call(this,ShaderDefines2D.__name2int,ShaderDefines2D.__int2name,ShaderDefines2D.__int2nameMap);
+	}
+
+	__class(ShaderDefines2D,'laya.webgl.shader.d2.ShaderDefines2D',_super);
+	ShaderDefines2D.__init__=function(){
+		ShaderDefines2D.reg("TEXTURE2D",0x01);
+		ShaderDefines2D.reg("PRIMITIVE",0x04);
+		ShaderDefines2D.reg("GLOW_FILTER",0x08);
+		ShaderDefines2D.reg("BLUR_FILTER",0x10);
+		ShaderDefines2D.reg("COLOR_FILTER",0x20);
+		ShaderDefines2D.reg("COLOR_ADD",0x40);
+		ShaderDefines2D.reg("WORLDMAT",0x80);
+		ShaderDefines2D.reg("FILLTEXTURE",0x100);
+		ShaderDefines2D.reg("FSHIGHPRECISION",0x400);
+		ShaderDefines2D.reg('MVP3D',0x800);
+	}
+
+	ShaderDefines2D.reg=function(name,value){
+		ShaderDefinesBase._reg(name,value,ShaderDefines2D.__name2int,ShaderDefines2D.__int2name);
+	}
+
+	ShaderDefines2D.toText=function(value,int2name,int2nameMap){
+		return ShaderDefinesBase._toText(value,int2name,int2nameMap);
+	}
+
+	ShaderDefines2D.toInt=function(names){
+		return ShaderDefinesBase._toInt(names,ShaderDefines2D.__name2int);
+	}
+
+	ShaderDefines2D.TEXTURE2D=0x01;
+	ShaderDefines2D.PRIMITIVE=0x04;
+	ShaderDefines2D.FILTERGLOW=0x08;
+	ShaderDefines2D.FILTERBLUR=0x10;
+	ShaderDefines2D.FILTERCOLOR=0x20;
+	ShaderDefines2D.COLORADD=0x40;
+	ShaderDefines2D.WORLDMAT=0x80;
+	ShaderDefines2D.FILLTEXTURE=0x100;
+	ShaderDefines2D.SKINMESH=0x200;
+	ShaderDefines2D.SHADERDEFINE_FSHIGHPRECISION=0x400;
+	ShaderDefines2D.MVP3D=0x800;
+	ShaderDefines2D.NOOPTMASK=0x08|0x10|0x20|0x100;
+	ShaderDefines2D.__name2int={};
+	ShaderDefines2D.__int2name=[];
+	ShaderDefines2D.__int2nameMap=[];
+	return ShaderDefines2D;
+})(ShaderDefinesBase)
+
+
+/**
+*<code>Script</code> 类用于创建脚本的父类，该类为抽象类，不允许实例。
+*组件的生命周期
+*/
+//class laya.components.Script extends laya.components.Component
+var Script=(function(_super){
+	function Script(){
+		Script.__super.call(this);;
+	}
+
+	__class(Script,'laya.components.Script',_super);
+	var __proto=Script.prototype;
+	/**
+	*@inheritDoc
+	*/
+	__proto._onAwake=function(){
+		this.onAwake();
+		if (this.onStart!==laya.components.Script.prototype.onStart){
+			Laya.startTimer.callLater(this,this.onStart);
+		}
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._onEnable=function(){
+		var proto=laya.components.Script.prototype;
+		if (this.onTriggerEnter!==proto.onTriggerEnter){
+			this.owner.on("triggerenter",this,this.onTriggerEnter);
+		}
+		if (this.onTriggerStay!==proto.onTriggerStay){
+			this.owner.on("triggerstay",this,this.onTriggerStay);
+		}
+		if (this.onTriggerExit!==proto.onTriggerExit){
+			this.owner.on("triggerexit",this,this.onTriggerExit);
+		}
+		if (this.onMouseDown!==proto.onMouseDown){
+			this.owner.on("mousedown",this,this.onMouseDown);
+		}
+		if (this.onMouseUp!==proto.onMouseUp){
+			this.owner.on("mouseup",this,this.onMouseUp);
+		}
+		if (this.onClick!==proto.onClick){
+			this.owner.on("click",this,this.onClick);
+		}
+		if (this.onStageMouseDown!==proto.onStageMouseDown){
+			Laya.stage.on("mousedown",this,this.onStageMouseDown);
+		}
+		if (this.onStageMouseUp!==proto.onStageMouseUp){
+			Laya.stage.on("mouseup",this,this.onStageMouseUp);
+		}
+		if (this.onStageClick!==proto.onStageClick){
+			Laya.stage.on("click",this,this.onStageClick);
+		}
+		if (this.onStageMouseMove!==proto.onStageMouseMove){
+			Laya.stage.on("mousemove",this,this.onStageMouseMove);
+		}
+		if (this.onDoubleClick!==proto.onDoubleClick){
+			this.owner.on("doubleclick",this,this.onDoubleClick);
+		}
+		if (this.onRightClick!==proto.onRightClick){
+			this.owner.on("rightclick",this,this.onRightClick);
+		}
+		if (this.onMouseMove!==proto.onMouseMove){
+			this.owner.on("mousemove",this,this.onMouseMove);
+		}
+		if (this.onMouseOver!==proto.onMouseOver){
+			this.owner.on("mouseover",this,this.onMouseOver);
+		}
+		if (this.onMouseOut!==proto.onMouseOut){
+			this.owner.on("mouseout",this,this.onMouseOut);
+		}
+		if (this.onKeyDown!==proto.onKeyDown){
+			Laya.stage.on("keydown",this,this.onKeyDown);
+		}
+		if (this.onKeyPress!==proto.onKeyPress){
+			Laya.stage.on("keypress",this,this.onKeyPress);
+		}
+		if (this.onKeyUp!==proto.onKeyUp){
+			Laya.stage.on("keyup",this,this.onKeyUp);
+		}
+		if (this.onUpdate!==proto.onUpdate){
+			Laya.updateTimer.frameLoop(1,this,this.onUpdate);
+		}
+		if (this.onLateUpdate!==proto.onLateUpdate){
+			Laya.lateTimer.frameLoop(1,this,this.onLateUpdate);
+		}
+		if (this.onPreRender!==proto.onPreRender){
+			Laya.lateTimer.frameLoop(1,this,this.onPreRender);
+		}
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._onDisable=function(){
+		this.owner.offAllCaller(this);
+		Laya.stage.offAllCaller(this);
+		Laya.startTimer.clearAll(this);
+		Laya.updateTimer.clearAll(this);
+		Laya.lateTimer.clearAll(this);
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._isScript=function(){
+		return true;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._onDestroy=function(){
+		this.onDestroy();
+	}
+
+	/**
+	*组件被激活后执行，此时所有节点和组件均已创建完毕，次方法只执行一次
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onAwake=function(){}
+	/**
+	*组件被启用后执行，比如节点被添加到舞台后
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onEnable=function(){}
+	/**
+	*第一次执行update之前执行，只会执行一次
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onStart=function(){}
+	/**
+	*开始碰撞时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onTriggerEnter=function(other,self,contact){}
+	/**
+	*持续碰撞时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onTriggerStay=function(other,self,contact){}
+	/**
+	*结束碰撞时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onTriggerExit=function(other,self,contact){}
+	/**
+	*鼠标按下时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onMouseDown=function(e){}
+	/**
+	*鼠标抬起时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onMouseUp=function(e){}
+	/**
+	*鼠标点击时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onClick=function(e){}
+	/**
+	*鼠标在舞台按下时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onStageMouseDown=function(e){}
+	/**
+	*鼠标在舞台抬起时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onStageMouseUp=function(e){}
+	/**
+	*鼠标在舞台点击时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onStageClick=function(e){}
+	/**
+	*鼠标在舞台移动时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onStageMouseMove=function(e){}
+	/**
+	*鼠标双击时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onDoubleClick=function(e){}
+	/**
+	*鼠标右键点击时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onRightClick=function(e){}
+	/**
+	*鼠标移动时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onMouseMove=function(e){}
+	/**
+	*鼠标经过节点时触发
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onMouseOver=function(e){}
+	/**
+	*鼠标离开节点时触发
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onMouseOut=function(e){}
+	/**
+	*键盘按下时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onKeyDown=function(e){}
+	/**
+	*键盘产生一个字符时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onKeyPress=function(e){}
+	/**
+	*键盘抬起时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onKeyUp=function(e){}
+	/**
+	*每帧更新时执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onUpdate=function(){}
+	/**
+	*每帧更新时执行，在update之后执行，尽量不要在这里写大循环逻辑或者使用getComponent方法
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onLateUpdate=function(){}
+	/**
+	*渲染之前执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onPreRender=function(){}
+	/**
+	*渲染之后执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onPostRender=function(){}
+	/**
+	*组件被禁用时执行，比如从节点从舞台移除后
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onDisable=function(){}
+	/**
+	*手动调用节点销毁时执行
+	*此方法为虚方法，使用时重写覆盖即可
+	*/
+	__proto.onDestroy=function(){}
+	/**
+	*@inheritDoc
+	*/
+	__getset(0,__proto,'isSingleton',function(){
+		return false;
+	});
+
+	return Script;
+})(Component)
 
 
 /**
@@ -66267,66 +66531,6 @@ var ShurikenParticleRenderer=(function(_super){
 
 
 /**
-*<code>PixelLineRenderer</code> 类用于线渲染器。
-*/
-//class laya.d3.core.pixelLine.PixelLineRenderer extends laya.d3.core.render.BaseRender
-var PixelLineRenderer=(function(_super){
-	function PixelLineRenderer(owner){
-		/**@private */
-		this._projectionViewWorldMatrix=null;
-		PixelLineRenderer.__super.call(this,owner);
-		this._projectionViewWorldMatrix=new Matrix4x4();
-	}
-
-	__class(PixelLineRenderer,'laya.d3.core.pixelLine.PixelLineRenderer',_super);
-	var __proto=PixelLineRenderer.prototype;
-	/**
-	*@inheritDoc
-	*/
-	__proto._calculateBoundingBox=function(){
-		var minE=this._boundingBox.min.elements;
-		minE[0]=-Number.MAX_VALUE;
-		minE[1]=-Number.MAX_VALUE;
-		minE[2]=-Number.MAX_VALUE;
-		var maxE=this._boundingBox.min.elements;
-		maxE[0]=Number.MAX_VALUE;
-		maxE[1]=Number.MAX_VALUE;
-		maxE[2]=Number.MAX_VALUE;
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto._calculateBoundingSphere=function(){
-		var centerE=this._boundingSphere.center.elements;
-		centerE[0]=0;
-		centerE[1]=0;
-		centerE[2]=0;
-		this._boundingSphere.radius=Number.MAX_VALUE;
-	}
-
-	/**
-	*@inheritDoc
-	*/
-	__proto._renderUpdateWithCamera=function(context,transform){
-		var projectionView=context.projectionViewMatrix;
-		var sv=this._shaderValues;
-		if (transform){
-			var worldMat=transform.worldMatrix;
-			sv.setMatrix4x4(Sprite3D.WORLDMATRIX,worldMat);
-			Matrix4x4.multiply(projectionView,worldMat,this._projectionViewWorldMatrix);
-			sv.setMatrix4x4(Sprite3D.MVPMATRIX,this._projectionViewWorldMatrix);
-			}else {
-			sv.setMatrix4x4(Sprite3D.WORLDMATRIX,Matrix4x4.DEFAULT);
-			sv.setMatrix4x4(Sprite3D.MVPMATRIX,projectionView);
-		}
-	}
-
-	return PixelLineRenderer;
-})(BaseRender)
-
-
-/**
 *<code>Avatar</code> 类用于创建Avatar。
 */
 //class laya.d3.core.Avatar extends laya.resource.Resource
@@ -66472,6 +66676,66 @@ var Avatar=(function(_super){
 
 	return Avatar;
 })(Resource)
+
+
+/**
+*<code>PixelLineRenderer</code> 类用于线渲染器。
+*/
+//class laya.d3.core.pixelLine.PixelLineRenderer extends laya.d3.core.render.BaseRender
+var PixelLineRenderer=(function(_super){
+	function PixelLineRenderer(owner){
+		/**@private */
+		this._projectionViewWorldMatrix=null;
+		PixelLineRenderer.__super.call(this,owner);
+		this._projectionViewWorldMatrix=new Matrix4x4();
+	}
+
+	__class(PixelLineRenderer,'laya.d3.core.pixelLine.PixelLineRenderer',_super);
+	var __proto=PixelLineRenderer.prototype;
+	/**
+	*@inheritDoc
+	*/
+	__proto._calculateBoundingBox=function(){
+		var minE=this._boundingBox.min.elements;
+		minE[0]=-Number.MAX_VALUE;
+		minE[1]=-Number.MAX_VALUE;
+		minE[2]=-Number.MAX_VALUE;
+		var maxE=this._boundingBox.min.elements;
+		maxE[0]=Number.MAX_VALUE;
+		maxE[1]=Number.MAX_VALUE;
+		maxE[2]=Number.MAX_VALUE;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._calculateBoundingSphere=function(){
+		var centerE=this._boundingSphere.center.elements;
+		centerE[0]=0;
+		centerE[1]=0;
+		centerE[2]=0;
+		this._boundingSphere.radius=Number.MAX_VALUE;
+	}
+
+	/**
+	*@inheritDoc
+	*/
+	__proto._renderUpdateWithCamera=function(context,transform){
+		var projectionView=context.projectionViewMatrix;
+		var sv=this._shaderValues;
+		if (transform){
+			var worldMat=transform.worldMatrix;
+			sv.setMatrix4x4(Sprite3D.WORLDMATRIX,worldMat);
+			Matrix4x4.multiply(projectionView,worldMat,this._projectionViewWorldMatrix);
+			sv.setMatrix4x4(Sprite3D.MVPMATRIX,this._projectionViewWorldMatrix);
+			}else {
+			sv.setMatrix4x4(Sprite3D.WORLDMATRIX,Matrix4x4.DEFAULT);
+			sv.setMatrix4x4(Sprite3D.MVPMATRIX,projectionView);
+		}
+	}
+
+	return PixelLineRenderer;
+})(BaseRender)
 
 
 //class laya.webgl.resource.CharPageTexture extends laya.resource.Resource
@@ -79919,6 +80183,33 @@ var SkinnedMeshRenderer=(function(_super){
 })(MeshRenderer)
 
 
+//class mainpage.MainPage_Scene extends laya.display.Scene
+var MainPage_Scene=(function(_super){
+	function MainPage_Scene(){
+		MainPage_Scene.__super.call(this);;
+	}
+
+	__class(MainPage_Scene,'mainpage.MainPage_Scene',_super);
+	var __proto=MainPage_Scene.prototype;
+	/**@prop {name:intType,tips:"整数类型示例",type:Int,default:1000}*/
+	__proto.onEnable=function(){
+		/*no*/this.m_Button_Buy.on("click",this,this.onButtonBuy);
+		/*no*/this.m_Button_Sell.on("click",this,this.onButtonSell);
+	}
+
+	__proto.onButtonBuy=function(e){
+		/*no*/this.m_Background.texture="UI/bg002.png";
+	}
+
+	__proto.onButtonSell=function(e){
+		/*no*/this.m_Background.texture="UI/bg001.png";
+	}
+
+	__proto.onDisable=function(){}
+	return MainPage_Scene;
+})(Scene)
+
+
 /**
 *<code>View</code> 是一个视图类，2.0开始，更改继承至Scene类，相对于Scene，增加相对布局功能。
 */
@@ -92942,7 +93233,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,CharBook,Timer,SceneUtils,WebGLContext2D,LocalStorage,View,CallLater,GraphicAnimation,GameConfig,Path]);
+	Laya.__init([EventDispatcher,LoaderManager,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,View,CallLater,GraphicAnimation,Path]);
 	/**LayaGameStart**/
 	new Main();
 
