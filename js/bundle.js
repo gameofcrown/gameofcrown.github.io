@@ -671,6 +671,7 @@ var GameConfig=(function(){
 	GameConfig.init=function(){
 		var reg=ClassUtils.regClass;
 		reg("mainpage.MainPage_Scene",MainPage_Scene);
+		reg("laya.display.Text",Text);
 	}
 
 	GameConfig.width=640;
@@ -679,7 +680,7 @@ var GameConfig=(function(){
 	GameConfig.screenMode="none";
 	GameConfig.alignV="top";
 	GameConfig.alignH="left";
-	GameConfig.startScene="FakeDex.scene";
+	GameConfig.startScene="GameMainPage.scene";
 	GameConfig.sceneRoot="";
 	GameConfig.debug=false;
 	GameConfig.stat=false;
@@ -80186,23 +80187,57 @@ var SkinnedMeshRenderer=(function(_super){
 //class mainpage.MainPage_Scene extends laya.display.Scene
 var MainPage_Scene=(function(_super){
 	function MainPage_Scene(){
-		MainPage_Scene.__super.call(this);;
+		/**@prop {name:intType,tips:"整数类型示例",type:Int,default:1000}*/
+		this.m_Selected=-1;
+		MainPage_Scene.__super.call(this);
 	}
 
 	__class(MainPage_Scene,'mainpage.MainPage_Scene',_super);
 	var __proto=MainPage_Scene.prototype;
-	/**@prop {name:intType,tips:"整数类型示例",type:Int,default:1000}*/
 	__proto.onEnable=function(){
-		/*no*/this.m_Button_Buy.on("click",this,this.onButtonBuy);
-		/*no*/this.m_Button_Sell.on("click",this,this.onButtonSell);
+		/*no*/this.m_Button_0.on("click",this,this.onButton0);
+		/*no*/this.m_Button_1.on("click",this,this.onButton1);
+		/*no*/this.m_Button_2.on("click",this,this.onButton2);
+		Laya.timer.frameLoop(1,this,this.animateFrameRateBased);
 	}
 
-	__proto.onButtonBuy=function(e){
-		/*no*/this.m_Background.texture="UI/bg002.png";
+	__proto.animateFrameRateBased=function(){
+		var s0=1.0;
+		var s1=1.0;
+		var s2=1.0;
+		if(this.m_Selected==0){
+			s0=1.3;
+			s1=1.0;
+			s2=1.0;
+		}
+		if(this.m_Selected==1){
+			s1=1.3;
+			s0=1.0;
+			s2=1.0;
+		}
+		if(this.m_Selected==2){
+			s2=1.3;
+			s0=1.0;
+			s1=1.0;
+		}
+		/*no*/this.m_Button_0.scaleX=s0;
+		/*no*/this.m_Button_0.scaleY=s0;
+		/*no*/this.m_Button_1.scaleX=s1;
+		/*no*/this.m_Button_1.scaleY=s1;
+		/*no*/this.m_Button_2.scaleX=s2;
+		/*no*/this.m_Button_2.scaleY=s2;
 	}
 
-	__proto.onButtonSell=function(e){
-		/*no*/this.m_Background.texture="UI/bg001.png";
+	__proto.onButton0=function(e){
+		this.m_Selected=0;
+	}
+
+	__proto.onButton1=function(e){
+		this.m_Selected=1;
+	}
+
+	__proto.onButton2=function(e){
+		this.m_Selected=2;
 	}
 
 	__proto.onDisable=function(){}
@@ -93233,7 +93268,7 @@ var TextArea=(function(_super){
 })(TextInput)
 
 
-	Laya.__init([EventDispatcher,LoaderManager,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,View,CallLater,GraphicAnimation,Path]);
+	Laya.__init([LoaderManager,EventDispatcher,CharBook,GameConfig,Timer,SceneUtils,WebGLContext2D,LocalStorage,View,CallLater,GraphicAnimation,Path]);
 	/**LayaGameStart**/
 	new Main();
 
