@@ -1,0 +1,1 @@
+{"type":"Dialog","props":{"width":750,"runtime":"mainpage.WhitePaper","height":1200},"compId":2,"child":[{"type":"Sprite","props":{"width":750,"var":"m_ScrollView","name":"m_ScrollView","height":1200},"compId":4,"child":[{"type":"Sprite","props":{"y":-56,"x":-208,"texture":"UI/091-free-backgrounds.png"},"compId":3}]}],"loadList":["UI/091-free-backgrounds.png"],"loadList3D":[]}
