@@ -8,6 +8,9 @@
 window.screenOrientation = "sensor_landscape";
 
 //-----libs-begin-----
-loadLib("libs/box2d.js")
+loadLib("libs/laya.core.js")
+loadLib("libs/laya.webgl.js")
+loadLib("libs/laya.ui.js")
+loadLib("libs/laya.physics.js")
 //-----libs-end-------
 loadLib("js/bundle.js");
