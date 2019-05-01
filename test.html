@@ -1,0 +1,55 @@
+<html>
+    <body>
+
+        <script>
+            var audio_shake;
+           
+            var SHAKE_THRESHOLD = 800;
+            var last_update = 0;
+            var x = y = z = last_x = last_y = last_z = 0;
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', deviceMotionHandler, false);
+            } else {
+                alert('抱歉，你的手机配置实在有些过不去，考虑换个新的再来试试吧');
+            }
+           var times=0;
+            
+            function deviceMotionHandler(eventData) {
+                var acceleration = eventData.accelerationIncludingGravity;
+                var curTime = new Date().getTime();
+                 
+                if ((curTime - last_update) > 100) {
+                    var diffTime = curTime - last_update;
+                    last_update = curTime;
+                    x = acceleration.x;
+                    y = acceleration.y;
+                    z = acceleration.z;
+                    var speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 100000;
+                    var status = document.getElementById("status");
+                    if (speed > SHAKE_THRESHOLD) {
+                        doResult();
+                        times++;
+                    }
+                    last_x = x;
+                    last_y = y;
+                    last_z = z;
+                }
+            }
+        
+              
+              
+            function doResult() {
+                if(times>10)
+                {
+                    alert("10!");
+                }
+                if(times>0){
+                    console.log(times+"times");
+                    return false;
+                    
+                }
+                
+            }
+            </script>
+    </body>
+</html>
